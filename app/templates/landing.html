@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+
+  <!-- optional glow -->
+  <div class="hero-glow"></div>
+
+  <div class="hero-eyebrow">AI-Powered Career Preparation Platform</div>
+
+  <h1 class="hero-title">
+    Forge your<br>
+    <em>career</em><br>
+    <span class="line2">with AI.</span>
+  </h1>
+
+  <p class="hero-desc">
+    Upload your resume, get an ATS score, go through a personalized
+    mock interview, and receive a 30-day roadmap to your dream job.
+  </p>
+
+  <div class="hero-actions">
+    <a href="/module1" class="btn-primary">
+      Get Started →
+    </a>
+    <a href="#modules" class="btn-secondary">
+      See Modules
+    </a>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num">3</div>
+      <div class="stat-label">AI Modules</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">50+</div>
+      <div class="stat-label">Skills tracked</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">10</div>
+      <div class="stat-label">Interview questions</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">30</div>
+      <div class="stat-label">Day roadmap</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- MODULES -->
+<section class="section" id="modules">
+  <div class="section-label">Platform Modules</div>
+
+  <div class="modules-grid">
+
+    <!-- Module 1 -->
+    <a href="/module1" class="module-card">
+      <div class="module-num">01</div>
+      <span class="module-tag tag-green">Gen AI</span>
+      <div class="module-title">Resume Analyzer</div>
+      <div class="module-desc">
+        Upload your resume and get instant ATS scoring,
+        skill extraction, and role matching.
+      </div>
+      <div class="module-features">
+        <span class="feature-item">ATS score</span>
+        <span class="feature-item">Skill detection</span>
+        <span class="feature-item">Role suggestions</span>
+      </div>
+      <div class="module-cta">Open →</div>
+    </a>
+
+    <!-- Module 2 -->
+    <a href="/module2" class="module-card">
+      <div class="module-num">02</div>
+      <span class="module-tag tag-amber">RAG + AI</span>
+      <div class="module-title">Mock Interview</div>
+      <div class="module-desc">
+        AI-powered interview based on your resume and role.
+      </div>
+      <div class="module-features">
+        <span class="feature-item">Resume-based Qs</span>
+        <span class="feature-item">Tech + HR rounds</span>
+        <span class="feature-item">Real-time answers</span>
+      </div>
+      <div class="module-cta">Open →</div>
+    </a>
+
+    <!-- Module 3 -->
+    <a href="/module3" class="module-card">
+      <div class="module-num">03</div>
+      <span class="module-tag tag-red">Evaluation</span>
+      <div class="module-title">Report & Roadmap</div>
+      <div class="module-desc">
+        Get score, suggestions, and a personalized roadmap.
+      </div>
+      <div class="module-features">
+        <span class="feature-item">Score out of 100</span>
+        <span class="feature-item">Skill gaps</span>
+        <span class="feature-item">PDF report</span>
+      </div>
+      <div class="module-cta">Open →</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- FLOW -->
+<section class="flow-section">
+  <div class="section-label">How it works</div>
+
+  <div class="flow-steps">
+
+    <div class="flow-step">
+      <div class="flow-arrow">→</div>
+      <div class="flow-step-num">Step 01</div>
+      <div class="flow-step-title">Upload Resume</div>
+      <div class="flow-step-desc">PDF parsing + skill extraction</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-arrow">→</div>
+      <div class="flow-step-num">Step 02</div>
+      <div class="flow-step-title">Get Roles</div>
+      <div class="flow-step-desc">AI matches best job roles</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-arrow">→</div>
+      <div class="flow-step-num">Step 03</div>
+      <div class="flow-step-title">Mock Interview</div>
+      <div class="flow-step-desc">Personalized Q&A session</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-step-num">Step 04</div>
+      <div class="flow-step-title">Get Report</div>
+      <div class="flow-step-desc">Score + roadmap + suggestions</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<div class="tech-strip">
+  <span class="tech-label">Built with</span>
+  <span class="tech-item">FastAPI</span>
+  <span class="tech-item">LangChain</span>
+  <span class="tech-item">ChromaDB</span>
+  <span class="tech-item">spaCy</span>
+  <span class="tech-item">Docker</span>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">CareerForge AI</div>
+  <div class="footer-copy">AI Placement Platform</div>
+</footer>
+
+{% endblock %}

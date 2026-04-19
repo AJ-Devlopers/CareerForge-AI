@@ -2,39 +2,146 @@
 
 {% block content %}
 
-<div class="hero">
-    <h1>AI Resume Analyzer</h1>
-</div>
+<div class="content">
 
-<!-- Upload Form -->
-<form action="/module1/upload" method="post" enctype="multipart/form-data" class="upload-card">
-    <input type="file" name="file" required>
-    <button type="submit">Analyze Resume</button>
-</form>
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
 
-{% if result %}
+    <div>
+      <div class="panel-title">
+        Resume<br>
+        <em style="font-style:italic;color:var(--accent)">Analyzer</em>
+      </div>
 
-<div class="result-container">
+      <p class="panel-sub">
+        Upload your resume PDF. We extract skills, calculate
+        your ATS score, and match you with the best roles.
+      </p>
+    </div>
 
-    <h2>Skills</h2>
-    <p>{{ result.skills | join(", ") }}</p>
+    <!-- FORM UPLOAD -->
+    <form action="/module1/upload" method="post" enctype="multipart/form-data">
 
-    <h2>Recommended Roles</h2>
+      <div class="upload-zone">
+        <input type="file" name="file" accept=".pdf" required>
 
-    {% for role in result.roles %}
-        <div class="role-card">
-            <h3>{{ role.role }} ({{ role.match }}%)</h3>
-            <p>{{ role.description }}</p>
-        </div>
-    {% endfor %}
+        <div class="upload-title">Upload your resume</div>
+        <div class="upload-sub">PDF only · max 10MB</div>
+      </div>
 
-    <!-- Clear session -->
-    <form action="/module1/clear-session" method="post">
-        <button type="submit">Upload New Resume</button>
+      <button type="submit" class="analyze-btn">
+        Analyze Resume
+      </button>
+
     </form>
 
-</div>
+    <!-- CLEAR BUTTON -->
+    {% if result %}
+    <form action="/module1/clear-session" method="post">
+      <button type="submit" class="analyze-btn" style="margin-top:10px;background:#444;">
+        Clear Result
+      </button>
+    </form>
+    {% endif %}
 
-{% endif %}
+    <!-- INFO -->
+    <div class="info-card">
+      <div class="info-card-title">Module info</div>
+
+      <div class="info-row">
+        <span class="info-key">Module</span>
+        <span class="info-val">01 — Gen AI</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-key">LLM</span>
+        <span class="info-val green">Groq LLaMA3</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-key">NLP</span>
+        <span class="info-val">spaCy</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <!-- EMPTY -->
+    {% if not result %}
+    <div class="empty-state">
+      <div class="empty-title">No resume uploaded</div>
+      <div class="empty-sub">Upload your resume to see analysis</div>
+    </div>
+    {% endif %}
+
+    <!-- RESULTS -->
+    {% if result %}
+    <div class="results show">
+
+      <!-- ATS -->
+      <div class="ats-header">
+        <div class="ats-title">ATS Score</div>
+        <span class="ats-badge">
+          {% if result.ats_score >= 75 %} Excellent
+          {% elif result.ats_score >= 50 %} Good
+          {% else %} Needs Work
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="score-display">
+        <div class="score-num">{{ result.ats_score }}</div>
+        <div class="score-denom">/100</div>
+      </div>
+
+      <div class="score-bar">
+        <div class="score-fill" style="width: {{ result.ats_score }}%;"></div>
+      </div>
+
+      <!-- STATS -->
+      <div class="results-grid">
+
+        <div class="result-card">
+          <div class="result-card-label">Skills</div>
+          <div class="result-card-val">{{ result.total_skills }}</div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-card-label">Top Match</div>
+          <div class="result-card-val">
+            {{ result.roles[0].match if result.roles else 0 }}%
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SKILLS -->
+      <div class="section-head">Skills</div>
+      <div class="skills-grid">
+        {% for skill in result.skills_found %}
+          <span class="skill-tag">{{ skill }}</span>
+        {% endfor %}
+      </div>
+
+      <!-- ROLES -->
+      <div class="section-head">Roles</div>
+      <div class="roles-list">
+        {% for role in result.roles %}
+          <div class="role-item">
+            <div>{{ role.role }}</div>
+            <div>{{ role.match }}%</div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+    {% endif %}
+
+  </div>
+
+</div>
 
 {% endblock %}

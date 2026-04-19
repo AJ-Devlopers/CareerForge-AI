@@ -1,0 +1,40 @@
+{
+  "Data Analyst": [
+    "python",
+    "sql",
+    "pandas",
+    "numpy",
+    "data analysis"
+  ],
+
+  "Machine Learning Engineer": [
+    "python",
+    "machine learning",
+    "deep learning",
+    "numpy",
+    "pandas"
+  ],
+
+  "Backend Developer": [
+    "python",
+    "django",
+    "flask",
+    "fastapi",
+    "sql"
+  ],
+
+  "Frontend Developer": [
+    "html",
+    "css",
+    "javascript",
+    "react"
+  ],
+
+  "DevOps Engineer": [
+    "docker",
+    "kubernetes",
+    "linux",
+    "aws",
+    "git"
+  ]
+}

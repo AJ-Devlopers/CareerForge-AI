@@ -1,20 +1,23 @@
-import spacy
-
-nlp = spacy.load("en_core_web_sm")
-
-SKILLS = [
-    "python", "java", "c++", "sql",
-    "machine learning", "deep learning",
-    "fastapi", "django", "react",
-    "docker", "html", "css", "javascript"
+# 🔹 Static skill database
+SKILLS_DB = [
+    "python", "java", "c++", "sql", "mongodb",
+    "machine learning", "deep learning", "nlp",
+    "data analysis", "pandas", "numpy",
+    "django", "flask", "fastapi",
+    "html", "css", "javascript", "react",
+    "docker", "kubernetes", "git",
+    "linux", "aws", "azure"
 ]
 
+
 def extract_skills(text):
+
+    found_skills = set()
+
     text = text.lower()
-    found = []
 
-    for skill in SKILLS:
+    for skill in SKILLS_DB:
         if skill in text:
-            found.append(skill)
+            found_skills.add(skill.title())
 
-    return list(set(found))
+    return list(found_skills)

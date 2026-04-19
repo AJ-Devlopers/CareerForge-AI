@@ -1,26 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>CareerForge AI</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CareerForge AI</title>
+
+<!-- CSS -->
+<link rel="stylesheet" href="/static/css/style.css">
+
+<!-- FONTS (same as your design) -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-    <div class="logo">CareerForge AI</div>
-    <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/module1">Resume Analyzer</a>
-    </div>
-</nav>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="/" class="sidebar-logo">CF</a>
 
-<!-- MAIN CONTENT -->
-<div class="main-container">
-    {% block content %}{% endblock %}
+  <nav class="sidebar-nav">
+
+    <a href="/" class="nav-item" title="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </a>
+
+    <a href="/module1" class="nav-item" title="Resume Analyzer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+    </a>
+
+    <a href="/module2" class="nav-item" title="Interview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </a>
+
+    <a href="/module3" class="nav-item" title="Report">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+    </a>
+
+  </nav>
+
+  <div class="sidebar-bottom">
+    <a href="#" class="nav-item" title="Settings">
+      ⚙️
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    
+    <div class="topbar-left">
+      CareerForge AI — v1.0
+    </div>
+
+    <div class="topbar-right">
+      
+      <div class="status-dot">
+        <span class="dot-live"></span>
+        System online
+      </div>
+
+      <span class="topbar-badge">Groq LLaMA3</span>
+
+    </div>
+
+  </div>
+
+  <!-- PAGE CONTENT -->
+  {% block content %}{% endblock %}
+
 </div>
 
+<!-- JS -->
 <script src="/static/js/main.js"></script>
+
 </body>
 </html>

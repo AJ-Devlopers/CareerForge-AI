@@ -17,8 +17,10 @@ spacy
 langchain
 langchain-community
 langchain-huggingface
-sentence-transformers
 chromadb
+
+# HuggingFace API (instead of sentence-transformers)
+requests
 
 # Document Processing
 pypdf

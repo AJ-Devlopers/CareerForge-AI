@@ -1,49 +1,81 @@
-async function uploadResume() {
-    const fileInput = document.getElementById("resumeFile");
+// =============================
+// FILE INPUT + UI HANDLING (SSR SAFE)
+// =============================
+
+const fileInput = document.querySelector('input[type="file"]');
+const uploadZone = document.querySelector('.upload-zone');
+
+// 🔹 Show selected file name
+if (fileInput) {
+  fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
 
-    if (!file) {
-        alert("Upload a PDF");
-        return;
+    if (file) {
+      console.log("Selected:", file.name);
+
+      // Create or update file label
+      let info = document.getElementById("fileNameDisplay");
+
+      if (!info) {
+        info = document.createElement("div");
+        info.id = "fileNameDisplay";
+        info.style.marginTop = "10px";
+        info.style.fontSize = "12px";
+        info.style.color = "var(--accent)";
+        uploadZone.appendChild(info);
+      }
+
+      info.textContent = file.name;
     }
-
-    document.getElementById("loader").classList.remove("hidden");
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("/module1/upload", {
-        method: "POST",
-        body: formData
-    });
-
-    const data = await response.json();
-
-    document.getElementById("loader").classList.add("hidden");
-
-    displayResult(data);
+  });
 }
 
-function displayResult(data) {
-    const resultDiv = document.getElementById("result");
 
-    let html = `
-        <div class="skill-box">
-            <h2>Skills</h2>
-            <p>${data.skills.join(", ")}</p>
-        </div>
-    `;
+// =============================
+// DRAG & DROP (UI ONLY)
+// =============================
 
-    html += `<h2 style="text-align:center;">Recommended Roles</h2>`;
+if (uploadZone && fileInput) {
 
-    data.roles.forEach(role => {
-        html += `
-            <div class="role-card">
-                <h3>${role.role} (${role.match}%)</h3>
-                <p>${role.description}</p>
-            </div>
-        `;
-    });
+  uploadZone.addEventListener("click", () => fileInput.click());
 
-    resultDiv.innerHTML = html;
+  uploadZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    uploadZone.classList.add("drag-over");
+  });
+
+  uploadZone.addEventListener("dragleave", () => {
+    uploadZone.classList.remove("drag-over");
+  });
+
+  uploadZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove("drag-over");
+
+    const file = e.dataTransfer.files[0];
+
+    if (file && file.type === "application/pdf") {
+      fileInput.files = e.dataTransfer.files;
+
+      // trigger change manually
+      fileInput.dispatchEvent(new Event("change"));
+    } else {
+      alert("Only PDF files allowed");
+    }
+  });
 }
+
+
+// =============================
+// OPTIONAL: SMOOTH SCROLL
+// =============================
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener("click", function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute("href"));
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+});
