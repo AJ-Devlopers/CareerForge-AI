@@ -252,3 +252,4 @@ function selectRole(role) {
   sessionStorage.setItem('selectedRole', role);
   window.location.href = '/module2?role=' + encodeURIComponent(role);
 }
+
