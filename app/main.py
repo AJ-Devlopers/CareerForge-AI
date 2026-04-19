@@ -44,7 +44,6 @@ def landing_page(request: Request):
 # =============================
 app.include_router(module1.router, prefix="/module1")
 
-
 # =============================
 # HEALTH CHECK
 # =============================

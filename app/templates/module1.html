@@ -1,66 +1,97 @@
 {% extends "base.html" %}
 
+{% block topbar %}
+<div class="topbar">
+  <div class="topbar-breadcrumb">
+    <a href="/">careerforge</a>
+    <span>/</span>
+    <span>module-01</span>
+    <span>/</span>
+    <span>resume-analyzer</span>
+  </div>
+  <div class="topbar-right">
+    <div class="status-pill">
+      <span class="dot-live"></span>
+      Groq ready
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+{% endblock %}
+
 {% block content %}
 
+<!-- CONTENT -->
 <div class="content">
 
   <!-- LEFT PANEL -->
   <div class="left-panel">
 
     <div>
-      <div class="panel-title">
-        Resume<br>
-        <em style="font-style:italic;color:var(--accent)">Analyzer</em>
-      </div>
-
+      <div class="panel-title">Resume<br><em style="font-style:italic;color:var(--accent)">Analyzer</em></div>
       <p class="panel-sub">
         Upload your resume PDF. We extract skills, calculate
         your ATS score, and match you with the best roles.
       </p>
     </div>
 
-    <!-- FORM UPLOAD -->
-    <form action="/module1/upload" method="post" enctype="multipart/form-data">
-
-      <div class="upload-zone">
-        <input type="file" name="file" accept=".pdf" required>
-
-        <div class="upload-title">Upload your resume</div>
-        <div class="upload-sub">PDF only · max 10MB</div>
+    <!-- UPLOAD ZONE -->
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept=".pdf">
+      <div class="upload-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <polyline points="9 15 12 12 15 15"/>
+        </svg>
+      </div>
+      <div class="upload-title">Drop your resume here</div>
+      <div class="upload-sub">PDF only · max 10MB</div>
+      <div class="file-info" id="fileInfo">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="fileName"></span>
       </div>
 
-      <button type="submit" class="analyze-btn">
-        Analyze Resume
-      </button>
+      <!-- UPLOAD PROGRESS -->
+      <div class="upload-progress-wrap" id="uploadProgressWrap">
+        <div class="upload-progress-bar" id="uploadProgressBar"></div>
+      </div>
+      <div class="upload-progress-label" id="uploadProgressLabel"></div>
+    </div>
 
-    </form>
+    <!-- ANALYZE BTN -->
+    <button class="analyze-btn" id="analyzeBtn" onclick="analyzeResume()" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Analyze Resume
+    </button>
 
-    <!-- CLEAR BUTTON -->
-    {% if result %}
-    <form action="/module1/clear-session" method="post">
-      <button type="submit" class="analyze-btn" style="margin-top:10px;background:#444;">
-        Clear Result
-      </button>
-    </form>
-    {% endif %}
-
-    <!-- INFO -->
+    <!-- INFO CARD -->
     <div class="info-card">
       <div class="info-card-title">Module info</div>
-
       <div class="info-row">
         <span class="info-key">Module</span>
         <span class="info-val">01 — Gen AI</span>
       </div>
-
       <div class="info-row">
         <span class="info-key">LLM</span>
         <span class="info-val green">Groq LLaMA3</span>
       </div>
-
       <div class="info-row">
         <span class="info-key">NLP</span>
-        <span class="info-val">spaCy</span>
+        <span class="info-val">spaCy NER</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Skills tracked</span>
+        <span class="info-val amber">50+</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Role profiles</span>
+        <span class="info-val">8 roles</span>
       </div>
     </div>
 
@@ -69,79 +100,82 @@
   <!-- RIGHT PANEL -->
   <div class="right-panel">
 
-    <!-- EMPTY -->
-    {% if not result %}
-    <div class="empty-state">
+    <!-- EMPTY STATE -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+      </div>
       <div class="empty-title">No resume uploaded</div>
-      <div class="empty-sub">Upload your resume to see analysis</div>
+      <div class="empty-sub">Upload your PDF resume on the left to get your ATS score, skill analysis, and role suggestions.</div>
     </div>
-    {% endif %}
+
+    <!-- LOADING -->
+    <div class="loading-state" id="loadingState">
+      <div class="spinner-ring"></div>
+      <div class="loading-steps">
+        <div class="loading-step" id="step1">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          Extracting text from PDF...
+        </div>
+        <div class="loading-step" id="step2">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          Detecting skills with spaCy...
+        </div>
+        <div class="loading-step" id="step3">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          Matching roles...
+        </div>
+        <div class="loading-step" id="step4">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          Generating insights via Groq...
+        </div>
+      </div>
+    </div>
 
     <!-- RESULTS -->
-    {% if result %}
-    <div class="results show">
+    <div class="results" id="results">
 
-      <!-- ATS -->
+      <!-- ATS Score -->
       <div class="ats-header">
         <div class="ats-title">ATS Score</div>
-        <span class="ats-badge">
-          {% if result.ats_score >= 75 %} Excellent
-          {% elif result.ats_score >= 50 %} Good
-          {% else %} Needs Work
-          {% endif %}
-        </span>
+        <span class="ats-badge" id="atsBadge"></span>
       </div>
 
       <div class="score-display">
-        <div class="score-num">{{ result.ats_score }}</div>
-        <div class="score-denom">/100</div>
+        <div class="score-num" id="scoreNum">0</div>
+        <div class="score-denom">/ 100</div>
       </div>
 
       <div class="score-bar">
-        <div class="score-fill" style="width: {{ result.ats_score }}%;"></div>
+        <div class="score-fill" id="scoreFill" style="width:0%"></div>
       </div>
 
-      <!-- STATS -->
+      <!-- Stats Grid -->
       <div class="results-grid">
-
         <div class="result-card">
-          <div class="result-card-label">Skills</div>
-          <div class="result-card-val">{{ result.total_skills }}</div>
+          <div class="result-card-label">Skills found</div>
+          <div class="result-card-val" id="skillCount" style="color:var(--accent)">0</div>
         </div>
-
         <div class="result-card">
-          <div class="result-card-label">Top Match</div>
-          <div class="result-card-val">
-            {{ result.roles[0].match if result.roles else 0 }}%
-          </div>
+          <div class="result-card-label">Top match</div>
+          <div class="result-card-val" id="topMatch" style="color:var(--green)">0%</div>
         </div>
-
       </div>
 
-      <!-- SKILLS -->
-      <div class="section-head">Skills</div>
-      <div class="skills-grid">
-        {% for skill in result.skills_found %}
-          <span class="skill-tag">{{ skill }}</span>
-        {% endfor %}
-      </div>
+      <!-- Skills -->
+      <div class="section-head">Skills detected</div>
+      <div class="skills-grid" id="skillsGrid"></div>
 
-      <!-- ROLES -->
-      <div class="section-head">Roles</div>
-      <div class="roles-list">
-        {% for role in result.roles %}
-          <div class="role-item">
-            <div>{{ role.role }}</div>
-            <div>{{ role.match }}%</div>
-          </div>
-        {% endfor %}
-      </div>
+      <!-- Roles -->
+      <div class="section-head">Role suggestions</div>
+      <div class="roles-list" id="rolesList"></div>
 
     </div>
-    {% endif %}
 
   </div>
-
 </div>
 
 {% endblock %}

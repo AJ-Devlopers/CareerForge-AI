@@ -1,33 +1,44 @@
 {% extends "base.html" %}
 
+{% block topbar %}
+<div class="topbar">
+  <span class="topbar-left">CareerForge AI — v1.0</span>
+  <div class="topbar-right">
+    <div class="status-dot">
+      <span class="dot-live"></span>
+      System online
+    </div>
+    <span class="topbar-badge">Groq LLaMA3</span>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+{% endblock %}
+
 {% block content %}
 
 <!-- HERO -->
 <section class="hero">
-
-  <!-- optional glow -->
-  <div class="hero-glow"></div>
-
   <div class="hero-eyebrow">AI-Powered Career Preparation Platform</div>
-
   <h1 class="hero-title">
     Forge your<br>
     <em>career</em><br>
     <span class="line2">with AI.</span>
   </h1>
-
   <p class="hero-desc">
     Upload your resume, get an ATS score, go through a personalized
     mock interview, and receive a 30-day roadmap to your dream job.
+    Built with Groq + LangChain + RAG.
   </p>
-
   <div class="hero-actions">
     <a href="/module1" class="btn-primary">
-      Get Started →
+      Get Started
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
-    <a href="#modules" class="btn-secondary">
-      See Modules
-    </a>
+    <a href="#modules" class="btn-secondary">See all modules</a>
   </div>
 
   <!-- STATS -->
@@ -49,62 +60,75 @@
       <div class="stat-label">Day roadmap</div>
     </div>
   </div>
-
 </section>
 
 <!-- MODULES -->
 <section class="section" id="modules">
-  <div class="section-label">Platform Modules</div>
+  <div class="section-label">Platform modules</div>
 
   <div class="modules-grid">
 
     <!-- Module 1 -->
-    <a href="/module1" class="module-card">
+    <a href="/module1" class="module-card animate">
       <div class="module-num">01</div>
       <span class="module-tag tag-green">Gen AI</span>
       <div class="module-title">Resume Analyzer</div>
       <div class="module-desc">
         Upload your resume and get instant ATS scoring,
-        skill extraction, and role matching.
+        skill extraction, and role matching powered by Groq.
       </div>
       <div class="module-features">
-        <span class="feature-item">ATS score</span>
-        <span class="feature-item">Skill detection</span>
-        <span class="feature-item">Role suggestions</span>
+        <span class="feature-item">ATS score out of 100</span>
+        <span class="feature-item">Skills gap detection</span>
+        <span class="feature-item">Top 5 role suggestions</span>
+        <span class="feature-item">Learn-next recommendations</span>
       </div>
-      <div class="module-cta">Open →</div>
+      <div class="module-cta">
+        Open module
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
     </a>
 
     <!-- Module 2 -->
-    <a href="/module2" class="module-card">
+    <a href="/module2" class="module-card animate delay-1">
       <div class="module-num">02</div>
-      <span class="module-tag tag-amber">RAG + AI</span>
+      <span class="module-tag tag-amber">RAG + Agents</span>
       <div class="module-title">Mock Interview</div>
       <div class="module-desc">
-        AI-powered interview based on your resume and role.
+        Go through a personalized AI interview based on your
+        resume and chosen role. Chat or voice interaction.
       </div>
       <div class="module-features">
-        <span class="feature-item">Resume-based Qs</span>
-        <span class="feature-item">Tech + HR rounds</span>
-        <span class="feature-item">Real-time answers</span>
+        <span class="feature-item">Resume-based questions</span>
+        <span class="feature-item">3 rounds (Resume, Tech, HR)</span>
+        <span class="feature-item">RAG-powered context</span>
+        <span class="feature-item">Real-time Q&A session</span>
       </div>
-      <div class="module-cta">Open →</div>
+      <div class="module-cta">
+        Open module
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
     </a>
 
     <!-- Module 3 -->
-    <a href="/module3" class="module-card">
+    <a href="/module3" class="module-card animate delay-2">
       <div class="module-num">03</div>
-      <span class="module-tag tag-red">Evaluation</span>
+      <span class="module-tag tag-red">DevOps</span>
       <div class="module-title">Report & Roadmap</div>
       <div class="module-desc">
-        Get score, suggestions, and a personalized roadmap.
+        Get a full evaluation of your interview performance
+        with suggestions, roadmap, and downloadable PDF report.
       </div>
       <div class="module-features">
         <span class="feature-item">Score out of 100</span>
-        <span class="feature-item">Skill gaps</span>
-        <span class="feature-item">PDF report</span>
+        <span class="feature-item">6 types of suggestions</span>
+        <span class="feature-item">30-day study roadmap</span>
+        <span class="feature-item">Downloadable PDF report</span>
       </div>
-      <div class="module-cta">Open →</div>
+      <div class="module-cta">
+        Open module
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
     </a>
 
   </div>
@@ -113,53 +137,58 @@
 <!-- FLOW -->
 <section class="flow-section">
   <div class="section-label">How it works</div>
-
   <div class="flow-steps">
-
     <div class="flow-step">
       <div class="flow-arrow">→</div>
       <div class="flow-step-num">Step 01</div>
       <div class="flow-step-title">Upload Resume</div>
-      <div class="flow-step-desc">PDF parsing + skill extraction</div>
+      <div class="flow-step-desc">PDF extracted via PyPDF, skills detected using spaCy NER</div>
     </div>
-
     <div class="flow-step">
       <div class="flow-arrow">→</div>
       <div class="flow-step-num">Step 02</div>
-      <div class="flow-step-title">Get Roles</div>
-      <div class="flow-step-desc">AI matches best job roles</div>
+      <div class="flow-step-title">Get Role Match</div>
+      <div class="flow-step-desc">Skills matched to 8 job profiles, Groq explains each role</div>
     </div>
-
     <div class="flow-step">
       <div class="flow-arrow">→</div>
       <div class="flow-step-num">Step 03</div>
       <div class="flow-step-title">Mock Interview</div>
-      <div class="flow-step-desc">Personalized Q&A session</div>
+      <div class="flow-step-desc">10 personalized questions via RAG + LangChain agents</div>
     </div>
-
     <div class="flow-step">
+      <div class="flow-arrow">→</div>
       <div class="flow-step-num">Step 04</div>
-      <div class="flow-step-title">Get Report</div>
-      <div class="flow-step-desc">Score + roadmap + suggestions</div>
+      <div class="flow-step-title">AI Evaluation</div>
+      <div class="flow-step-desc">Groq scores each answer, identifies weak areas</div>
     </div>
-
+    <div class="flow-step">
+      <div class="flow-step-num">Step 05</div>
+      <div class="flow-step-title">Get Report</div>
+      <div class="flow-step-desc">Full PDF report with 30-day roadmap and course links</div>
+    </div>
   </div>
 </section>
 
-<!-- TECH STACK -->
+<!-- TECH STRIP -->
 <div class="tech-strip">
   <span class="tech-label">Built with</span>
   <span class="tech-item">FastAPI</span>
+  <span class="tech-item">Groq LLaMA3</span>
   <span class="tech-item">LangChain</span>
   <span class="tech-item">ChromaDB</span>
   <span class="tech-item">spaCy</span>
+  <span class="tech-item">PyPDF</span>
+  <span class="tech-item">FPDF2</span>
   <span class="tech-item">Docker</span>
+  <span class="tech-item">GitHub Actions</span>
+  <span class="tech-item">HuggingFace Spaces</span>
 </div>
 
 <!-- FOOTER -->
 <footer>
   <div class="footer-brand">CareerForge AI</div>
-  <div class="footer-copy">AI Placement Platform</div>
+  <div class="footer-copy">BTech Final Year Project · Groq + LangChain + RAG</div>
 </footer>
 
 {% endblock %}

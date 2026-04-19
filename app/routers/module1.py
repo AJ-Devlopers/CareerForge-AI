@@ -33,18 +33,16 @@ def module1_page(request: Request):
 # =============================
 # UPLOAD + PROCESS
 # =============================
-@router.post("/upload", response_class=HTMLResponse)
+@router.post("/upload")
 async def upload_resume(request: Request, file: UploadFile = File(...)):
-
-    contents = await file.read()
 
     # 🔹 clear old session
     old_id = request.session.get("session_id")
     if old_id and old_id in report_store:
         del report_store[old_id]
 
-    # 🔹 run pipeline
-    result = run_module1_pipeline(contents)
+    # 🔹 run pipeline — pass file object directly
+    result = run_module1_pipeline(file)
 
     # 🔹 store result
     session_id = str(uuid.uuid4())
@@ -54,16 +52,9 @@ async def upload_resume(request: Request, file: UploadFile = File(...)):
     request.session.clear()
     request.session["session_id"] = session_id
 
-    return templates.TemplateResponse(
-        request=request,
-        name="module1.html",
-        context={
-            "request": request,
-            "result": result
-        }
-    )
-
-
+    # ✅ return JSON for JS fetch
+    from fastapi.responses import JSONResponse
+    return JSONResponse(content=result)
 # =============================
 # CLEAR SESSION
 # =============================
