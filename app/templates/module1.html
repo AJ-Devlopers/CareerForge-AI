@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="hero">
+    <h1>AI Resume Analyzer</h1>
+</div>
+
+<!-- Upload Form -->
+<form action="/module1/upload" method="post" enctype="multipart/form-data" class="upload-card">
+    <input type="file" name="file" required>
+    <button type="submit">Analyze Resume</button>
+</form>
+
+{% if result %}
+
+<div class="result-container">
+
+    <h2>Skills</h2>
+    <p>{{ result.skills | join(", ") }}</p>
+
+    <h2>Recommended Roles</h2>
+
+    {% for role in result.roles %}
+        <div class="role-card">
+            <h3>{{ role.role }} ({{ role.match }}%)</h3>
+            <p>{{ role.description }}</p>
+        </div>
+    {% endfor %}
+
+    <!-- Clear session -->
+    <form action="/module1/clear-session" method="post">
+        <button type="submit">Upload New Resume</button>
+    </form>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

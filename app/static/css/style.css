@@ -1,0 +1,119 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 40px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+.nav-links a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: white;
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.hero h1 {
+    font-size: 40px;
+    color: #38bdf8;
+}
+
+.hero p {
+    color: #cbd5f5;
+}
+
+/* UPLOAD CARD */
+.upload-card {
+    margin: 40px auto;
+    padding: 30px;
+    width: 350px;
+    text-align: center;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+input {
+    margin-bottom: 15px;
+}
+
+/* BUTTON */
+button {
+    padding: 12px 25px;
+    background: #38bdf8;
+    border: none;
+    border-radius: 8px;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0ea5e9;
+}
+
+/* LOADER */
+.loader {
+    border: 5px solid #1e293b;
+    border-top: 5px solid #38bdf8;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 20px auto;
+    animation: spin 1s linear infinite;
+}
+
+.hidden {
+    display: none;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* RESULTS */
+.result-container {
+    max-width: 700px;
+    margin: auto;
+}
+
+.skill-box {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.role-card {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.role-card:hover {
+    transform: scale(1.02);
+    background: rgba(255,255,255,0.08);
+}
+
+.role-card h3 {
+    color: #38bdf8;
+}

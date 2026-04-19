@@ -1,0 +1,12 @@
+uploads/
+outputs/
+chroma_db/
+
+uploads/*.pdf
+outputs/*.pdf
+
+__pycache__/
+*.pyc
+.env
+venv/
+.vscode/

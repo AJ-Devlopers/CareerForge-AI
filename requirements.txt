@@ -1,0 +1,32 @@
+# Backend
+fastapi
+uvicorn
+python-multipart
+jinja2
+pydantic
+sqlalchemy
+python-dotenv
+
+# AI (Groq)
+groq
+
+# NLP
+spacy
+
+# RAG
+langchain
+langchain-community
+langchain-huggingface
+sentence-transformers
+chromadb
+
+# Document Processing
+pypdf
+
+# PDF Generation
+fpdf2
+
+# Utilities
+aiofiles
+
+#python -m spacy download en_core_web_sm
