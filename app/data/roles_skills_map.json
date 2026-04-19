@@ -1,47 +1,63 @@
 {
-  "Data Analyst": ["python","sql","excel","pandas","numpy","data visualization","power bi","tableau","statistics","data cleaning"],
-  "Business Analyst": ["excel","sql","power bi","communication","stakeholder management","requirements gathering","analysis","jira","documentation","process modeling"],
-  "Data Scientist": ["python","machine learning","statistics","pandas","numpy","scikit-learn","data visualization","feature engineering","model evaluation","deep learning"],
-  "Machine Learning Engineer": ["python","tensorflow","pytorch","mlops","numpy","scikit-learn","docker","kubernetes","model deployment","data pipelines"],
-  "AI Engineer": ["python","deep learning","nlp","computer vision","pytorch","tensorflow","model optimization","data preprocessing","api integration","mlops"],
-  "NLP Engineer": ["python","nlp","transformers","spacy","huggingface","text preprocessing","bert","tokenization","language models","deep learning"],
-  "Computer Vision Engineer": ["opencv","deep learning","cnn","python","image processing","pytorch","tensorflow","object detection","segmentation","feature extraction"],
-  "Backend Developer": ["python","django","flask","fastapi","sql","rest api","authentication","caching","system design","debugging"],
-  "Frontend Developer": ["html","css","javascript","react","responsive design","ui ux","tailwind","redux","api integration","performance optimization"],
-  "Full Stack Developer": ["javascript","react","nodejs","mongodb","api","express","authentication","deployment","git","debugging"],
-  "Web Developer": ["html","css","javascript","web design","seo","responsive design","performance","accessibility","hosting","api integration"],
-  "Software Engineer": ["dsa","java","python","oop","system design","algorithms","debugging","git","testing","problem solving"],
-  "Mobile App Developer": ["flutter","kotlin","swift","android","ios","ui design","api integration","state management","testing","deployment"],
-  "Android Developer": ["kotlin","java","android sdk","xml","api","firebase","ui design","debugging","testing","gradle"],
-  "iOS Developer": ["swift","ios","xcode","ui kit","api","core data","debugging","testing","swiftui","deployment"],
-  "Game Developer": ["unity","c#","game design","physics","graphics","animation","ai","debugging","level design","optimization"],
-  "DevOps Engineer": ["docker","kubernetes","aws","ci cd","linux","terraform","monitoring","scripting","networking","automation"],
-  "Cloud Engineer": ["aws","azure","gcp","networking","cloud architecture","security","scalability","deployment","monitoring","storage"],
-  "Site Reliability Engineer": ["linux","monitoring","automation","kubernetes","scripting","incident response","logging","performance","scalability","debugging"],
-  "Cyber Security Analyst": ["network security","ethical hacking","siem","firewalls","linux","threat detection","incident response","encryption","vulnerability assessment","risk analysis"],
-  "Ethical Hacker": ["penetration testing","kali linux","networking","exploits","security","reconnaissance","vulnerability scanning","web security","reporting","tools"],
-  "Network Engineer": ["tcp ip","routing","switching","cisco","firewalls","network design","troubleshooting","vpn","dns","dhcp"],
-  "System Administrator": ["linux","windows server","networking","backup","security","scripting","monitoring","virtualization","troubleshooting","patching"],
-  "Database Administrator": ["sql","oracle","mysql","performance tuning","backup","replication","security","indexing","query optimization","monitoring"],
-  "Big Data Engineer": ["hadoop","spark","scala","kafka","data pipelines","etl","hive","distributed systems","data lakes","processing"],
-  "Data Engineer": ["etl","python","sql","airflow","big data","data pipelines","data warehousing","spark","kafka","optimization"],
-  "Blockchain Developer": ["solidity","ethereum","web3","smart contracts","cryptography","dapps","security","testing","truffle","deployment"],
-  "UI/UX Designer": ["figma","adobe xd","prototyping","user research","design","wireframing","usability testing","interaction design","typography","color theory"],
-  "Product Manager": ["roadmap","agile","analytics","communication","strategy","market research","stakeholder management","prioritization","kpis","product lifecycle"],
-  "Project Manager": ["scrum","kanban","planning","leadership","jira","risk management","budgeting","communication","scheduling","reporting"],
-  "QA Engineer": ["testing","selenium","manual testing","automation","bug tracking","test cases","regression testing","performance testing","api testing","debugging"],
-  "Automation Tester": ["selenium","java","testng","cypress","automation","api testing","framework design","debugging","ci cd","scripts"],
-  "Embedded Systems Engineer": ["c","microcontrollers","rtos","electronics","iot","debugging","firmware","hardware interfacing","protocols","testing"],
-  "IoT Engineer": ["arduino","raspberry pi","iot","sensors","embedded","networking","cloud","mqtt","automation","security"],
-  "Robotics Engineer": ["robotics","python","ros","ai","mechanics","control systems","sensors","automation","simulation","debugging"],
-  "AI Researcher": ["deep learning","research","math","python","papers","experiments","optimization","models","analysis","algorithms"],
-  "Statistician": ["statistics","r","data analysis","probability","modeling","hypothesis testing","regression","sampling","data cleaning","visualization"],
-  "Financial Analyst": ["excel","finance","analysis","modeling","accounting","forecasting","valuation","reporting","data analysis","risk"],
-  "Marketing Analyst": ["analytics","seo","google analytics","data","marketing","campaigns","reporting","excel","segmentation","kpis"],
-  "SEO Specialist": ["seo","keywords","google tools","content","analytics","backlinks","on-page seo","off-page seo","technical seo","audits"],
-  "Content Writer": ["writing","seo","research","editing","blogging","copywriting","storytelling","content strategy","grammar","tools"],
-  "Technical Writer": ["documentation","writing","api docs","communication","tools","editing","research","markdown","diagrams","clarity"],
-  "HR Analyst": ["hr","analytics","excel","communication","recruitment","data analysis","reporting","policies","kpis","management"],
-  "Recruiter": ["recruitment","communication","linkedin","hr","screening","interviewing","sourcing","negotiation","tracking","onboarding"],
-  "Solutions Architect": ["architecture","cloud","design","scalability","systems","integration","security","documentation","apis","optimization"]
+"Data Analyst": ["python","sql","excel","power bi","statistics"],
+"Business Analyst": ["excel","sql","power bi","communication","requirements gathering"],
+"Data Scientist": ["python","machine learning","statistics","pandas","scikit-learn"],
+"Machine Learning Engineer": ["python","pytorch","tensorflow","docker","model deployment"],
+"AI Engineer": ["python","deep learning","nlp","pytorch","tensorflow"],
+"NLP Engineer": ["python","nlp","transformers","spacy","huggingface"],
+"Computer Vision Engineer": ["opencv","deep learning","cnn","python","pytorch"],
+
+"Backend Developer": ["python","django","fastapi","sql","rest api"],
+"Frontend Developer": ["html","css","javascript","react","tailwind"],
+"Full Stack Developer": ["javascript","react","nodejs","mongodb","api"],
+"Web Developer": ["html","css","javascript","responsive design","seo"],
+"Software Engineer": ["dsa","java","python","system design","algorithms"],
+
+"Mobile App Developer": ["flutter","kotlin","swift","android","api"],
+"Android Developer": ["kotlin","java","android sdk","firebase","api"],
+"iOS Developer": ["swift","ios","xcode","swiftui","api"],
+
+"Game Developer": ["unity","c#","game design","graphics","animation"],
+
+"DevOps Engineer": ["docker","kubernetes","aws","ci cd","linux"],
+"Cloud Engineer": ["aws","azure","gcp","networking","cloud architecture"],
+"Site Reliability Engineer": ["linux","monitoring","kubernetes","automation","debugging"],
+
+"Cyber Security Analyst": ["network security","ethical hacking","linux","siem","firewalls"],
+"Ethical Hacker": ["penetration testing","kali linux","networking","security","web security"],
+"Network Engineer": ["tcp ip","routing","switching","cisco","firewalls"],
+"System Administrator": ["linux","windows server","networking","monitoring","troubleshooting"],
+"Database Administrator": ["sql","mysql","performance tuning","replication","query optimization"],
+
+"Big Data Engineer": ["hadoop","spark","kafka","etl","scala"],
+"Data Engineer": ["python","sql","etl","airflow","data pipelines"],
+
+"Blockchain Developer": ["solidity","ethereum","web3","smart contracts","cryptography"],
+
+"UI/UX Designer": ["figma","prototyping","user research","wireframing","usability testing"],
+
+"Product Manager": ["roadmap","agile","analytics","strategy","kpis"],
+"Project Manager": ["scrum","kanban","planning","leadership","jira"],
+
+"QA Engineer": ["testing","selenium","automation","test cases","api testing"],
+"Automation Tester": ["selenium","java","testng","cypress","automation"],
+
+"Embedded Systems Engineer": ["c","microcontrollers","rtos","firmware","iot"],
+"IoT Engineer": ["arduino","raspberry pi","iot","sensors","mqtt"],
+"Robotics Engineer": ["robotics","python","ros","automation","control systems"],
+
+"AI Researcher": ["deep learning","research","python","models","optimization"],
+"Statistician": ["statistics","r","probability","modeling","regression"],
+
+"Financial Analyst": ["excel","finance","analysis","modeling","forecasting"],
+"Marketing Analyst": ["analytics","seo","google analytics","campaigns","kpis"],
+"SEO Specialist": ["seo","keywords","google tools","content","backlinks"],
+
+"Content Writer": ["writing","seo","research","editing","copywriting"],
+"Technical Writer": ["documentation","writing","api docs","markdown","clarity"],
+
+"HR Analyst": ["hr","analytics","excel","recruitment","reporting"],
+"Recruiter": ["recruitment","communication","linkedin","screening","interviewing"],
+
+"Solutions Architect": ["architecture","cloud","design","scalability","apis"]
 }

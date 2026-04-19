@@ -2,7 +2,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 /* ── VARIABLES ── */
-
 :root{
   --bg:#0c0c0c;
   --bg2:#141414;
@@ -57,22 +56,6 @@ body.light{
   --green:#16a34a;
   --amber:#d97706;
   --red:#dc2626;
-} */
-body.light{
-  --bg:#f9fafb;
-  --bg2:#f3f4f6;
-  --surface:#ffffff;
-  --surface2:#f1f5f9;
-  --border:rgba(0,0,0,0.05);
-  --border2:rgba(0,0,0,0.1);
-  --text:#111827;
-  --muted:#6b7280;
-  --accent:#111827;
-  --accent2:#374151;
-  --white:#000000;
-  --green:#16a34a;
-  --amber:#d97706;
-  --red:#dc2626; 
 }
 /* body.light{
   --bg:#f9fafb;
@@ -919,10 +902,6 @@ footer{
   max-width:280px;line-height:1.6;
 }
 
-/* ── RESULTS ── */
-.results{display:none}
-.results.show{display:block}
-
 /* ATS Score */
 .ats-header{
   display:flex;align-items:center;justify-content:space-between;
@@ -1121,24 +1100,6 @@ footer{
 .delay-2{animation-delay:0.2s}
 .delay-3{animation-delay:0.3s}
 
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .sidebar{display:none}
-  .main{margin-left:0}
-  .content{grid-template-columns:1fr}
-  .left-panel{border-right:none;border-bottom:1px solid var(--border)}
-  .results-grid{grid-template-columns:1fr}
-}
-
-@media(max-width:768px){
-  .modules-grid{grid-template-columns:1fr}
-  .stats-row{flex-direction:column}
-  .stat-item{border-right:none;border-bottom:1px solid var(--border)}
-  .flow-steps{flex-direction:column}
-  .flow-step{border-right:none;border-bottom:1px solid var(--border)}
-  .flow-arrow{display:none}
-}
-
 /* =========================
    MODULE 2 CHAT UI
 ========================= */
@@ -1305,8 +1266,6 @@ footer{
   margin-bottom: 2rem;
 }
 
-@media (max-width: 1024px) { .round-cards-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 600px)  { .round-cards-grid { grid-template-columns: 1fr; } }
 
 .round-card {
   background: var(--surface);
@@ -1465,4 +1424,505 @@ footer{
 }
 
 
+
+/* ===== ATS BREAKDOWN ===== */
+.breakdown-grid { display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.5rem; }
+.breakdown-item { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem; }
+.breakdown-top  { display:flex; justify-content:space-between; margin-bottom:0.5rem; }
+.breakdown-label{ font-family:var(--mono); font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; }
+.breakdown-score{ font-family:var(--serif); font-weight:700; font-size:1rem; }
+.breakdown-max  { font-size:0.7rem; color:var(--muted); }
+.breakdown-bar  { height:3px; background:var(--surface2); border-radius:2px; overflow:hidden; margin-bottom:0.4rem; }
+.breakdown-fill { height:100%; border-radius:2px; transition:width 0.8s ease; }
+.breakdown-detail{ font-family:var(--mono); font-size:0.6rem; color:var(--muted); }
+
+
+
+/* ═══════════════════════════════════════════════════════
+   PASTE THIS BLOCK at the bottom of your style.css
+   (before the @media responsive blocks)
+═══════════════════════════════════════════════════════ */
+
+/* ── results show/hide ── */
+.results { display: none; }
+.results.show { display: block; }
+
+/* ── ATS feedback line ── */
+.ats-feedback {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Section label above breakdown ── */
+.breakdown-section-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Breakdown list wrapper ── */
+.breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Single expandable card ── */
+.bd-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.bd-card:hover { border-color: var(--border2); }
+
+.bd-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  gap: 0.75rem;
+  user-select: none;
+}
+
+.bd-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.bd-card-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.bd-card-bar-wrap {
+  height: 3px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.bd-card-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bd-card-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.bd-card-score {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.bd-card-max {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+.bd-chevron {
+  color: var(--muted);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.bd-card.open .bd-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Expandable body ── */
+.bd-card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 1rem;
+}
+
+.bd-card.open .bd-card-body {
+  max-height: 200px;
+  padding: 0 1rem 0.9rem;
+}
+
+.bd-card-detail {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+}
+/* ══════════════════════════════════════════════════════════
+   PASTE THIS ENTIRE BLOCK at the bottom of style.css,
+   just BEFORE the @media responsive blocks.
+══════════════════════════════════════════════════════════ */
+
+/* ── Score row layout (number + circle side by side) ── */
+.score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+/* ── Circle progress ── */
+.circle-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.circle-wrap svg {
+  display: block;
+}
+
+.progress-bg {
+  fill: none;
+  stroke: var(--surface2);
+}
+
+.progress-bar {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.05s linear;
+}
+
+/* circle centre label */
+.circle-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: var(--text);
+  line-height: 1;
+}
+
+/* ── Breakdown sub-checks (tick / cross list) ── */
+.bd-subchecks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.bd-subcheck-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.bd-subcheck-icon {
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+}
+
+.bd-subcheck-icon.ok   { color: var(--green); }
+.bd-subcheck-icon.warn { color: var(--amber); }
+.bd-subcheck-icon.fail { color: var(--red);   }
+
+.bd-subcheck-label {
+  text-transform: capitalize;
+}
+
+/* ── Custom role section ── */
+.custom-role-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.custom-role-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.custom-role-input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-role-input:focus {
+  border-color: var(--accent);
+}
+
+.custom-role-input::placeholder {
+  color: var(--muted);
+}
+
+.custom-role-btn {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  padding: 0.7rem 1.2rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.custom-role-btn:hover {
+  background: var(--white);
+  transform: translateY(-1px);
+}
+
+/* result card */
+.custom-role-result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.2rem;
+  margin-top: 1rem;
+}
+
+.custom-role-result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.custom-role-name {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.custom-role-match-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.custom-role-pct {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 2rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.custom-role-bar-wrap {
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.custom-role-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* matched skill tag highlight */
+.skill-tag.skill-match {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(74, 222, 128, 0.08);
+}
+/* ── ROLE ITEM CARD (matches custom role style) ── */
+.roles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.role-item-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.4rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.role-item-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+}
+
+.role-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.role-card-sublabel {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.role-name {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.role-pct {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 2rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.role-bar {
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.role-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+.reset-btn {
+  border: none;
+  background: transparent;
+  opacity: 0.90;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s,
+              width 0.35s 0.15s cubic-bezier(0.4,0,0.2,1),
+              padding 0.35s 0.15s,
+              gap 0.35s 0.15s;
+}
+ 
+.reset-btn.reset-btn--active {
+  opacity: 1;
+  cursor: pointer;
+}
+ 
+.reset-btn.reset-btn--active:hover {
+  background: rgba(248,113,113,0.1);
+  color: var(--red);
+}
+
+.t.top-reset-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border2); /* stronger */
+  background: transparent;             /* don't fight the topbar bg */
+  color: var(--text);                  /* always visible text/icon color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.top-reset-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;  /* ADD THIS — force SVG to inherit color */
+}
+
+.top-reset-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(248,113,113,0.08);
+}
+
+.top-reset-btn.active {
+  border-color: rgba(248,113,113,0.3);
+  color: var(--red);
+}
+
+/* active */
+.top-reset-btn.active {
+  border-color: rgba(248,113,113,0.3);
+  color: var(--red);
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .content{grid-template-columns:1fr}
+  .left-panel{border-right:none;border-bottom:1px solid var(--border)}
+  .results-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:768px){
+  .modules-grid{grid-template-columns:1fr}
+  .stats-row{flex-direction:column}
+  .stat-item{border-right:none;border-bottom:1px solid var(--border)}
+  .flow-steps{flex-direction:column}
+  .flow-step{border-right:none;border-bottom:1px solid var(--border)}
+  .flow-arrow{display:none}
+}
+
+@media (max-width: 1024px) { .round-cards-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .round-cards-grid { grid-template-columns: 1fr; } }
 

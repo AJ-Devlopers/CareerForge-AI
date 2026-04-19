@@ -23,7 +23,6 @@
 
 {% block content %}
 
-<!-- CONTENT -->
 <div class="content">
 
   <!-- LEFT PANEL -->
@@ -31,10 +30,7 @@
 
     <div>
       <div class="panel-title">Resume<br><em style="font-style:italic;color:var(--accent)">Analyzer</em></div>
-      <p class="panel-sub">
-        Upload your resume PDF. We extract skills, calculate
-        your ATS score, and match you with the best roles.
-      </p>
+      <p class="panel-sub">Upload your resume PDF. We extract skills, calculate your ATS score, and match you with the best roles.</p>
     </div>
 
     <!-- UPLOAD ZONE -->
@@ -51,11 +47,11 @@
       <div class="upload-title">Drop your resume here</div>
       <div class="upload-sub">PDF only · max 10MB</div>
       <div class="file-info" id="fileInfo">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
         <span id="fileName"></span>
       </div>
-
-      <!-- UPLOAD PROGRESS -->
       <div class="upload-progress-wrap" id="uploadProgressWrap">
         <div class="upload-progress-bar" id="uploadProgressBar"></div>
       </div>
@@ -64,17 +60,16 @@
 
     <!-- ANALYZE BTN -->
     <button class="analyze-btn" id="analyzeBtn" onclick="analyzeResume()" disabled>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
       Analyze Resume
     </button>
 
     <!-- INFO CARD -->
     <div class="info-card">
       <div class="info-card-title">Module info</div>
-      <!-- <div class="info-row">
-        <span class="info-key">Module</span>
-        <span class="info-val">01 — Gen AI</span>
-      </div> -->
       <div class="info-row">
         <span class="info-key">LLM</span>
         <span class="info-val green">Groq LLaMA3</span>
@@ -101,7 +96,7 @@
     <!-- EMPTY STATE -->
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
         </svg>
@@ -136,22 +131,37 @@
     <!-- RESULTS -->
     <div class="results" id="results">
 
-      <!-- ATS Score -->
+      <!-- ATS SCORE HEADER -->
       <div class="ats-header">
         <div class="ats-title">ATS Score</div>
         <span class="ats-badge" id="atsBadge"></span>
       </div>
 
-      <div class="score-display">
-        <div class="score-num" id="scoreNum">0</div>
-        <div class="score-denom">/ 100</div>
+      <!-- SCORE + CIRCLE side by side -->
+      <div class="score-row">
+        <div>
+          <div class="score-display">
+            <div class="score-num" id="scoreNum">0</div>
+            <div class="score-denom">/ 100</div>
+          </div>
+          <div id="atsFeedback" class="ats-feedback"></div>
+        </div>
+
+        <!-- CIRCLE PROGRESS -->
+        <div class="circle-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" class="progress-bg" stroke-width="8" fill="none"/>
+            <circle cx="60" cy="60" r="52" class="progress-bar" id="progressCircle"
+                    stroke-width="8" fill="none"
+                    stroke-dasharray="326.73"
+                    stroke-dashoffset="326.73"
+                    transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="circle-label" id="circleLabel">0</div>
+        </div>
       </div>
 
-      <div class="score-bar">
-        <div class="score-fill" id="scoreFill" style="width:0%"></div>
-      </div>
-
-      <!-- Stats Grid -->
+      <!-- STATS GRID -->
       <div class="results-grid">
         <div class="result-card">
           <div class="result-card-label">Skills found</div>
@@ -163,159 +173,82 @@
         </div>
       </div>
 
-      <!-- Skills -->
-      <div class="section-head">Skills detected</div>
+      <!-- ATS BREAKDOWN -->
+      <div class="breakdown-section-label" style="margin-top:1.5rem">ATS Score Breakdown</div>
+      <div class="breakdown-list" id="atsBreakdown"></div>
+
+      <!-- IMPROVEMENTS -->
+      <div id="improvementsBlock" style="display:none">
+        <div class="breakdown-section-label">How to improve</div>
+        <div class="improvements-wrap" id="improvementsList"></div>
+      </div>
+
+      <!-- SKILLS -->
+      <div class="section-head" style="margin-top:1.5rem">Skills detected</div>
       <div class="skills-grid" id="skillsGrid"></div>
 
-      <!-- Roles -->
+      <!-- ROLES -->
       <div class="section-head">Role suggestions</div>
       <div class="roles-list" id="rolesList"></div>
 
-    </div>
+      <!-- ══════════════════════════════
+           CUSTOM ROLE SECTION
+      ══════════════════════════════ -->
+      <div class="custom-role-section">
+        <div class="section-head">Try a custom role</div>
+        <p class="panel-sub" style="margin-bottom:1rem">
+          Not seeing your target role? Type it below — AI will analyze your compatibility.
+        </p>
 
-  </div>
-</div>
-
-<!-- CUSTOM ROLE INPUT -->
-<div style="margin-top:2rem;">
-  <div class="section-head">Add a Custom Role</div>
-
-  <div style="
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:1.5rem;
-  ">
-    <p style="font-size:0.75rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;">
-      Don't see your target role? Enter it below — our AI will auto-detect required skills and match them against your resume.
-    </p>
-
-    <div style="display:flex;gap:0.75rem;margin-bottom:1rem;">
-      <input
-        type="text"
-        id="customRoleInput"
-        placeholder="e.g. ML Engineer, DevOps, Product Manager..."
-        style="
-          flex:1;padding:0.75rem 1rem;
-          background:var(--surface2);
-          border:1px solid var(--border2);
-          border-radius:10px;
-          color:var(--text);
-          font-family:var(--mono);
-          font-size:0.75rem;
-          outline:none;
-        "
-      >
-      <button onclick="analyzeCustomRole()" style="
-        font-family:var(--mono);font-size:0.72rem;
-        padding:0.75rem 1.5rem;
-        background:var(--accent);color:var(--bg);
-        border:none;border-radius:10px;
-        cursor:pointer;transition:all 0.2s;
-        white-space:nowrap;font-weight:500;
-      ">
-        Analyze Role →
-      </button>
-    </div>
-
-    <!-- RESULTS -->
-      <div class="results" id="results">
-
-        <!-- ATS Score -->
-        <div class="ats-header">
-          <div class="ats-title">ATS Score</div>
-          <span class="ats-badge" id="atsBadge"></span>
+        <div class="custom-role-input-row">
+          <input
+            type="text"
+            id="customRoleInput"
+            class="custom-role-input"
+            placeholder="e.g. Prompt Engineer, AI Product Manager..."
+          />
+          <button class="custom-role-btn" onclick="analyzeCustomRole()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            Analyze
+          </button>
         </div>
 
-        <div class="score-display">
-          <div class="score-num" id="scoreNum">0</div>
-          <div class="score-denom">/ 100</div>
-        </div>
-
-        <div class="score-bar">
-          <div class="score-fill fill-amber" id="scoreFill" style="width:0%"></div>
-        </div>
-
-        <!-- Stats Grid — IDs must match JS: skillCount + topMatch -->
-        <div class="results-grid">
-          <div class="result-card">
-            <div class="result-card-label">Skills found</div>
-            <div class="result-card-val" id="skillCount" style="color:var(--accent)">0</div>
-          </div>
-          <div class="result-card">
-            <div class="result-card-label">Top match</div>
-            <div class="result-card-val" id="topMatch" style="color:var(--green)">0%</div>
+        <!-- Loading -->
+        <div id="customRoleLoading" style="display:none;margin-top:1rem">
+          <div class="loading-step active">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            <span id="customRoleLoadingText">Fetching required skills via AI...</span>
           </div>
         </div>
 
-        <!-- Skills -->
-        <div class="section-head">Skills detected</div>
-        <div class="skills-grid" id="skillsGrid"></div>
-
-        <!-- Roles -->
-        <div class="section-head">Role suggestions</div>
-        <div class="roles-list" id="rolesList"></div>
-
-        <!-- ── CUSTOM ROLE ── -->
-        <div class="custom-role-section">
-          <div class="section-head">Add a Custom Role</div>
-          <div class="custom-role-box">
-
-            <p class="custom-role-hint">
-              Don't see your target role? Enter it below — AI will auto-detect required skills
-              and match them against your resume.
-            </p>
-
-            <div class="custom-role-input-row">
-              <input
-                type="text"
-                id="customRoleInput"
-                class="custom-role-input"
-                placeholder="e.g. ML Engineer, DevOps, Product Manager..."
-              >
-              <button class="custom-role-btn" onclick="analyzeCustomRole()">
-                Analyze →
-              </button>
+        <!-- Result Card -->
+        <div id="customRoleResult" class="custom-role-result" style="display:none">
+          <div class="custom-role-result-top">
+            <div>
+              <div class="custom-role-name" id="customRoleName"></div>
+              <div class="custom-role-match-label">Compatibility match</div>
             </div>
-
-            <!-- Loading -->
-            <div class="custom-role-loading" id="customRoleLoading">
-              <div class="custom-role-loading-dot"></div>
-              <span id="customRoleLoadingText">Fetching required skills via AI...</span>
-            </div>
-
-            <!-- Result -->
-            <div class="custom-role-result" id="customRoleResult">
-              <div class="custom-role-result-header">
-                <div>
-                  <div class="custom-role-result-name" id="customRoleName"></div>
-                  <div class="custom-role-result-sublabel">AI-matched skills</div>
-                </div>
-                <div class="custom-role-result-pct" id="customRoleMatch"></div>
-              </div>
-
-              <div class="custom-role-bar-wrap">
-                <div class="custom-role-bar-fill" id="customRoleBar"></div>
-              </div>
-
-              <div class="custom-role-skills-wrap" id="customRoleSkills"></div>
-
-              <button class="custom-role-start-btn" id="customRoleInterviewBtn">
-                Start Interview for this Role →
-              </button>
-            </div>
-
+            <div class="custom-role-pct" id="customRoleMatchPct"></div>
           </div>
-        </div>
-        <!-- ── END CUSTOM ROLE ── -->
 
+          <div class="custom-role-bar-wrap">
+            <div class="custom-role-bar-fill" id="customRoleBar"></div>
+          </div>
+
+          <div class="section-head" style="margin-top:1rem">Required skills</div>
+          <div class="skills-grid" id="customRoleSkills"></div>
+
+          <button class="role-select-btn" id="customRoleInterviewBtn" style="margin-top:1rem">
+            Start Interview as this role →
+          </button>
+        </div>
       </div>
-      
+      <!-- end custom role -->
 
-    <!-- Loading state -->
-    <div id="customRoleLoading" style="display:none;font-family:var(--mono);font-size:0.68rem;color:var(--accent);padding:0.5rem 0;">
-      <span id="customRoleLoadingText">⏳ Fetching required skills via AI...</span>
     </div>
+    <!-- end #results -->
 
   </div>
 </div>
