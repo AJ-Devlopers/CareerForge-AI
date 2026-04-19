@@ -4,23 +4,31 @@ import os
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
-def generate_question(role, round_type, context):
+def generate_question(role, round_type, context, asked_questions=None, language="English"):
+
+    asked = "\n".join(asked_questions or [])
 
     prompt = f"""
-    You are an interviewer.
+    You are a professional interviewer.
 
     Role: {role}
     Round: {round_type}
+    Language: {language}
 
     Candidate resume context:
     {context}
 
-    Ask ONE realistic interview question.
+    Already asked questions:
+    {asked}
 
-    Rules:
-    - No explanation
-    - Only question
-    - Keep it relevant to resume
+    Instructions:
+    - Ask ONLY ONE new question
+    - Do NOT repeat previous questions
+    - Keep it realistic and relevant
+    - Default language is English unless specified
+
+    Output:
+    Only the question
     """
 
     res = client.chat.completions.create(
