@@ -6,24 +6,40 @@ from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
 import os
 
-from app.routers import module1
+# 🔥 IMPORT ROUTERS
+from app.routers import module1, module2
 
-# 🔹 Load env
+
+# =============================
+# LOAD ENV VARIABLES
+# =============================
 load_dotenv()
 
-# 🔹 Create app
+
+# =============================
+# CREATE FASTAPI APP
+# =============================
 app = FastAPI(title="CareerForge AI")
 
-# 🔹 Session middleware (IMPORTANT for SSR)
+
+# =============================
+# SESSION MIDDLEWARE (IMPORTANT)
+# =============================
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("SECRET_KEY", "supersecretkey")
 )
 
-# 🔹 Static files
+
+# =============================
+# STATIC FILES (CSS / JS)
+# =============================
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-# 🔹 Templates
+
+# =============================
+# TEMPLATES (JINJA2)
+# =============================
 templates = Jinja2Templates(directory="app/templates")
 
 
@@ -40,9 +56,16 @@ def landing_page(request: Request):
 
 
 # =============================
-# MODULE 1 ROUTER
+# MODULE 1 ROUTES
 # =============================
 app.include_router(module1.router, prefix="/module1")
+
+
+# =============================
+# MODULE 2 ROUTES ✅
+# =============================
+app.include_router(module2.router)
+
 
 # =============================
 # HEALTH CHECK
