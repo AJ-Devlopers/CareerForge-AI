@@ -26,15 +26,73 @@
 <div class="module2-container">
 
   <!-- ============================
-       ROUND SELECTION SCREEN
+       ROLE GATE SCREEN
+       shown if no role from M1
   ============================= -->
-  <div id="roundSelectionScreen" class="round-selection-screen">
-
-    <div class="round-selection-inner">
+  <div id="roleGateScreen" class="role-gate-screen" style="display:none;">
+    <div class="role-gate-inner">
 
       <div class="round-sel-eyebrow">
         <span class="round-sel-dot"></span>
-        Mock Interview — {{ role or "Software Engineer" }}
+        No Resume Detected
+      </div>
+
+      <h2 class="round-sel-title">
+        Enter your <em>target role</em>
+      </h2>
+      <p class="round-sel-sub">
+        You haven't uploaded a resume yet. Enter a role below to continue,
+        or use <strong>General Discussion</strong> for free-form career advice.
+      </p>
+
+      <div class="role-gate-input-row">
+        <input
+          type="text"
+          id="manualRoleInput"
+          class="custom-role-input"
+          placeholder="e.g. Frontend Engineer, Data Analyst…"
+          autocomplete="off"
+        />
+        <button class="custom-role-btn" onclick="confirmManualRole()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          Continue
+        </button>
+      </div>
+
+      <!-- skill chips appear here -->
+      <div id="roleGateSkills" class="role-gate-skills" style="display:none;">
+        <div class="section-head" style="margin-bottom:0.6rem">Relevant skills for this role</div>
+        <div id="roleGateSkillChips" class="skills-grid"></div>
+      </div>
+
+      <p class="role-gate-hint">
+        No role? Use <button class="role-gate-discussion-btn" onclick="useGeneralDiscussion()">General Discussion ↗</button>
+      </p>
+
+    </div>
+  </div>
+
+
+  <!-- ============================
+       ROUND SELECTION SCREEN
+  ============================= -->
+  <div id="roundSelectionScreen" class="round-selection-screen" style="display:none;">
+
+    <div class="round-selection-inner">
+
+      <!-- ROLE TAB (autofilled from M1 or manual) -->
+      <div class="role-tab" id="roleTab">
+        <div class="role-tab-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span class="role-tab-label">Interviewing for:</span>
+        <span class="role-tab-value" id="roleTabValue">—</span>
+        <button class="role-tab-change" onclick="changeRole()">Change</button>
+      </div>
+
+      <div class="round-sel-eyebrow" style="margin-top:1.5rem">
+        <span class="round-sel-dot"></span>
+        Mock Interview
       </div>
 
       <h1 class="round-sel-title">
@@ -51,119 +109,86 @@
 
         <button class="round-card" onclick="selectRound('screening', this)">
           <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </div>
           <div class="round-card-tag tag-amber">Entry Point</div>
           <div class="round-card-title">Initial Screening</div>
           <div class="round-card-desc">Quick 15-min intro call. Background, motivation, communication skills, and culture fit basics.</div>
-          <div class="round-card-pills">
-            <span>Background</span><span>Motivation</span><span>Communication</span>
-          </div>
+          <div class="round-card-pills"><span>Background</span><span>Motivation</span><span>Communication</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('technical', this)">
           <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           </div>
           <div class="round-card-tag tag-green">Core Round</div>
           <div class="round-card-title">Technical Round</div>
-          <div class="round-card-desc">Deep-dive into your tech stack, architecture decisions, tools, and domain knowledge from your resume.</div>
-          <div class="round-card-pills">
-            <span>Tech Stack</span><span>Architecture</span><span>Tools</span>
-          </div>
+          <div class="round-card-desc">Deep-dive into your tech stack, architecture decisions, tools, and domain knowledge.</div>
+          <div class="round-card-pills"><span>Tech Stack</span><span>Architecture</span><span>Tools</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('coding', this)">
           <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
           <div class="round-card-tag tag-red">Problem Solving</div>
           <div class="round-card-title">Coding / DSA Round</div>
           <div class="round-card-desc">Algorithm, data structures, and coding problems relevant to your domain and role level.</div>
-          <div class="round-card-pills">
-            <span>Algorithms</span><span>DSA</span><span>Optimization</span>
-          </div>
+          <div class="round-card-pills"><span>Algorithms</span><span>DSA</span><span>Optimization</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('project', this)">
           <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           </div>
           <div class="round-card-tag tag-green">Resume Deep-Dive</div>
           <div class="round-card-title">Project Round</div>
-          <div class="round-card-desc">Detailed questions about your projects — decisions made, trade-offs, challenges, tech choices and outcomes.</div>
-          <div class="round-card-pills">
-            <span>Projects</span><span>Trade-offs</span><span>Outcomes</span>
-          </div>
+          <div class="round-card-desc">Detailed questions about your projects — decisions made, trade-offs, challenges, outcomes.</div>
+          <div class="round-card-pills"><span>Projects</span><span>Trade-offs</span><span>Outcomes</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('behavioral', this)">
           <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <div class="round-card-tag tag-amber">Soft Skills</div>
           <div class="round-card-title">Behavioural Round</div>
-          <div class="round-card-desc">STAR-format situational questions about leadership, conflict, failure, teamwork, and growth mindset.</div>
-          <div class="round-card-pills">
-            <span>STAR Method</span><span>Leadership</span><span>Teamwork</span>
-          </div>
+          <div class="round-card-desc">STAR-format situational questions about leadership, conflict, failure, teamwork.</div>
+          <div class="round-card-pills"><span>STAR Method</span><span>Leadership</span><span>Teamwork</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('system_design', this)">
           <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg>
           </div>
           <div class="round-card-tag tag-red">Senior Level</div>
           <div class="round-card-title">System Design</div>
-          <div class="round-card-desc">Design scalable systems relevant to your tech stack — databases, APIs, caching, microservices, load balancing.</div>
-          <div class="round-card-pills">
-            <span>Scalability</span><span>Architecture</span><span>APIs</span>
-          </div>
+          <div class="round-card-desc">Design scalable systems — databases, APIs, caching, microservices, load balancing.</div>
+          <div class="round-card-pills"><span>Scalability</span><span>Architecture</span><span>APIs</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('hr', this)">
           <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
           <div class="round-card-tag tag-green">Culture Fit</div>
           <div class="round-card-title">HR Round</div>
-          <div class="round-card-desc">Salary expectations, work style, career goals, strengths and weaknesses, notice period and availability.</div>
-          <div class="round-card-pills">
-            <span>Salary</span><span>Career Goals</span><span>Culture Fit</span>
-          </div>
+          <div class="round-card-desc">Salary expectations, work style, career goals, strengths, weaknesses, notice period.</div>
+          <div class="round-card-pills"><span>Salary</span><span>Career Goals</span><span>Culture Fit</span></div>
         </button>
 
         <button class="round-card round-card--discussion" onclick="selectRound('discussion', this)">
           <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
           <div class="round-card-tag tag-amber">Open Session</div>
           <div class="round-card-title">General Discussion</div>
-          <div class="round-card-desc">Casual conversation — get career advice, skill suggestions, roadmap guidance, or talk through your resume freely.</div>
-          <div class="round-card-pills">
-            <span>Career Advice</span><span>Roadmap</span><span>Suggestions</span>
-          </div>
+          <div class="round-card-desc">Casual conversation — get career advice, skill suggestions, roadmap guidance or talk freely.</div>
+          <div class="round-card-pills"><span>Career Advice</span><span>Roadmap</span><span>Suggestions</span></div>
         </button>
 
       </div>
 
-      <!-- START BTN -->
       <button class="round-start-btn" id="startInterviewBtn" disabled onclick="startInterview()">
         Start Interview
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -174,7 +199,7 @@
 
 
   <!-- ============================
-       CHAT SCREEN (hidden initially)
+       CHAT SCREEN
   ============================= -->
   <div id="chatScreen" class="chat-screen" style="display:none;">
 
@@ -190,39 +215,316 @@
         </div>
       </div>
 
+      <!-- role pill in header -->
+      <div class="chat-role-pill" id="chatRolePill">—</div>
+
       <div class="module2-controls">
-        <button onclick="startVoice()" class="voice-btn" title="Voice input">
-          🎙️
-        </button>
+        <!-- empty, voice is now near input -->
       </div>
     </div>
 
     <!-- CHAT AREA -->
-    <div class="chat-container" id="chatBox">
-      <div class="bot">
-        👋 Welcome to your AI Interview.<br><br>
-        I will ask questions based on your resume and the round you selected.<br><br>
-        Type anything or press <strong>Send</strong> to get your first question 🚀
-      </div>
-    </div>
+    <div class="chat-container" id="chatBox"></div>
 
     <!-- INPUT AREA -->
     <div class="input-container">
       <input
         type="text"
         id="inputBox"
-        placeholder="Type your answer..."
+        placeholder="Type your answer…"
         autocomplete="off"
-      >
-      <button id="sendBtn">Send</button>
+      />
+
+      <!-- VOICE BUTTON -->
+      <button id="voiceBtn" class="voice-input-btn" onclick="toggleVoice()" title="Voice input">
+        <span class="voice-btn-inner">
+          <svg class="voice-icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 10a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="8" y1="22" x2="16" y2="22"/>
+          </svg>
+          <span class="voice-waves">
+            <span></span><span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+      </button>
+
+      <button id="sendBtn" class="send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
     </div>
 
   </div>
 
 </div>
+<script>
+const ROUND_LABELS = {
+  screening:    'Initial Screening',
+  technical:    'Technical Round',
+  coding:       'Coding / DSA Round',
+  project:      'Project Round',
+  behavioral:   'Behavioural Round',
+  system_design:'System Design',
+  hr:           'HR Round',
+  discussion:   'General Discussion'
+};
 
+let selectedRound     = null;
+let currentRole       = '';
+let voiceActive       = false;
+let recognition       = null;
+let voiceSilenceTimer = null;
 
+// ── on load ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+  const params  = new URLSearchParams(window.location.search);
+  const urlRole = params.get('role') || '';
+  const ssRole  = sessionStorage.getItem('selectedRole') || '';
+  currentRole   = urlRole || ssRole;
 
+  if (currentRole) {
+    showRoundSelection(currentRole);
+  } else {
+    document.getElementById('roleGateScreen').style.display = 'flex';
+  }
 
+  document.getElementById('manualRoleInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') confirmManualRole();
+  });
 
+  document.getElementById('inputBox').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+});
+
+// ── role gate ────────────────────────────────────────────────
+async function confirmManualRole() {
+  const input = document.getElementById('manualRoleInput');
+  const role  = input.value.trim();
+  if (!role) { input.focus(); return; }
+  currentRole = role;
+
+  try {
+    const res  = await fetch('/module1/analyze-custom-role', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ role })
+    });
+    const data = await res.json();
+    if (data.role_skills && data.role_skills.length) {
+      const chipsEl = document.getElementById('roleGateSkillChips');
+      chipsEl.innerHTML = data.role_skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
+      document.getElementById('roleGateSkills').style.display = 'block';
+    }
+  } catch(e) {}
+
+  setTimeout(function () { showRoundSelection(role); }, 900);
+}
+
+function useGeneralDiscussion() {
+  currentRole = 'General';
+  showRoundSelection('General');
+  setTimeout(function () {
+    document.querySelectorAll('.round-card').forEach(function (c) {
+      if (c.querySelector('.round-card-title').textContent.includes('General')) {
+        selectRound('discussion', c);
+      }
+    });
+  }, 100);
+}
+
+function changeRole() {
+  document.getElementById('roundSelectionScreen').style.display = 'none';
+  document.getElementById('roleGateScreen').style.display       = 'flex';
+  document.getElementById('manualRoleInput').value              = '';
+  document.getElementById('roleGateSkills').style.display       = 'none';
+}
+
+function showRoundSelection(role) {
+  document.getElementById('roleGateScreen').style.display       = 'none';
+  document.getElementById('roundSelectionScreen').style.display = 'flex';
+  document.getElementById('roleTabValue').textContent           = role;
+}
+
+// ── round selection ──────────────────────────────────────────
+function selectRound(round, el) {
+  selectedRound = round;
+  document.querySelectorAll('.round-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('startInterviewBtn').disabled = false;
+}
+
+function startInterview() {
+  if (!selectedRound) return;
+  document.getElementById('chatSubtitle').textContent           = ROUND_LABELS[selectedRound] || selectedRound;
+  document.getElementById('chatRolePill').textContent           = currentRole;
+  document.getElementById('roundSelectionScreen').style.display = 'none';
+  document.getElementById('chatScreen').style.display           = 'flex';
+  document.getElementById('chatBox').innerHTML                  = '';
+  botGreet();
+}
+
+// ── FIX 1: stop voice when going back ───────────────────────
+function backToRounds() {
+  stopVoice();   // ← always kill voice first
+  document.getElementById('chatScreen').style.display           = 'none';
+  document.getElementById('roundSelectionScreen').style.display = 'flex';
+}
+
+// ── greeting ─────────────────────────────────────────────────
+function botGreet() {
+  if (selectedRound === 'discussion') {
+    // FIX 2: general discussion → friendly chatbot greeting
+    appendBotMessage(`Hey! 👋 I'm your CareerForge AI assistant.\n\nAsk me <strong>anything</strong> — career advice, skill roadmaps, resume tips, salary negotiation, interview prep, tech stacks, or just talk. I'm here to help. What's on your mind?`);
+  } else {
+    const roundLabel = ROUND_LABELS[selectedRound] || selectedRound;
+    appendBotMessage(`👋 Hi! Welcome to your <strong>${roundLabel}</strong> for the <strong>${currentRole}</strong> role.\n\nI'll ask you questions one at a time and give you feedback before moving on.\n\nWhenever you're ready — just say "start" or type anything to begin! 🚀`);
+  }
+}
+
+// ── send message ─────────────────────────────────────────────
+async function sendMessage(overrideText) {
+  const inputBox = document.getElementById('inputBox');
+  const message  = (overrideText !== undefined ? overrideText : inputBox.value).trim();
+  if (!message) return;
+
+  appendUserMessage(message);
+  inputBox.value = '';
+
+  const typingEl = appendTyping();
+
+  // FIX 2: general discussion → hit different endpoint (plain chat)
+  const endpoint = (selectedRound === 'discussion')
+    ? '/module2/discuss'
+    : '/module2/next-question';
+
+  try {
+    const res  = await fetch(endpoint, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        role:   currentRole,
+        round:  selectedRound,
+        answer: message,
+        message: message   // discuss endpoint uses "message" key
+      })
+    });
+    const data = await res.json();
+    removeTyping(typingEl);
+    const reply = data.reply || data.question || data.message || 'No response.';
+    appendBotMessage(reply);
+    if (voiceActive) speakText(reply);
+  } catch (err) {
+    removeTyping(typingEl);
+    appendBotMessage('⚠️ Error getting response. Please try again.');
+  }
+}
+
+// ── message helpers ──────────────────────────────────────────
+function appendUserMessage(text) {
+  const chatBox = document.getElementById('chatBox');
+  const div = document.createElement('div');
+  div.className   = 'msg user';
+  div.textContent = text;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function appendBotMessage(text) {
+  const chatBox = document.getElementById('chatBox');
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function appendTyping() {
+  const chatBox = document.getElementById('chatBox');
+  const div = document.createElement('div');
+  div.className = 'msg bot typing-indicator';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  return div;
+}
+
+function removeTyping(el) {
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+}
+
+// ── VOICE ────────────────────────────────────────────────────
+function toggleVoice() {
+  voiceActive ? stopVoice() : startVoice();
+}
+
+function startVoice() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Voice input not supported. Please use Chrome.');
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang           = 'en-US';
+  recognition.interimResults = true;
+  recognition.continuous     = true;
+  voiceActive = true;
+  setVoiceUI(true);
+
+  recognition.onresult = function (event) {
+    let interim = '', final = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) final   += event.results[i][0].transcript;
+      else                          interim += event.results[i][0].transcript;
+    }
+    document.getElementById('inputBox').value = final || interim;
+    if (final) {
+      clearTimeout(voiceSilenceTimer);
+      voiceSilenceTimer = setTimeout(function () {
+        if (voiceActive && final.trim()) {
+          sendMessage(final.trim());
+          document.getElementById('inputBox').value = '';
+        }
+      }, 1800);
+    }
+  };
+  recognition.onerror = function () { stopVoice(); };
+  recognition.onend   = function () { if (voiceActive) recognition.start(); };
+  recognition.start();
+}
+
+function stopVoice() {
+  voiceActive = false;
+  clearTimeout(voiceSilenceTimer);
+  if (recognition) {
+    recognition.onend = null;   // prevent auto-restart
+    recognition.stop();
+    recognition = null;
+  }
+  setVoiceUI(false);
+  window.speechSynthesis && window.speechSynthesis.cancel(); // stop TTS too
+}
+
+function setVoiceUI(active) {
+  const btn = document.getElementById('voiceBtn');
+  if (btn) btn.classList.toggle('voice-active', active);
+}
+
+function speakText(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(
+    text.replace(/<[^>]*>/g, '').replace(/\*\*/g, '')
+  );
+  utt.rate  = 0.95;
+  utt.pitch = 1;
+  window.speechSynthesis.speak(utt);
+}
+</script>
 {% endblock %}
