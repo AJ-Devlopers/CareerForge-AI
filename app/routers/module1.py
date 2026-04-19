@@ -1,7 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from app.modules.module1_genai.pipeline import run_module1_pipeline
+from app.modules.module1_genai.llm_service import generate_role_skills
 import uuid
 
 router = APIRouter()
@@ -69,3 +70,45 @@ async def clear_session(request: Request):
     request.session.clear()
 
     return RedirectResponse(url="/module1", status_code=303)
+
+
+
+# =============================
+# CUSTOM ROLE ANALYSIS
+# =============================
+@router.post("/module1/analyze-custom-role")
+async def analyze_custom_role(request: Request):
+
+    data = await request.json()
+    role = data.get("role", "").strip()
+
+    if not role:
+        return JSONResponse({"error": "Role required"}, status_code=400)
+
+    # Get session resume skills
+    session_id = request.session.get("session_id")
+    result = report_store.get(session_id)
+
+    user_skills = []
+    if result:
+        user_skills = [s.lower() for s in result.get("skills_found", [])]
+
+    # AI: get required skills for the role
+    role_skills_raw = generate_role_skills(role)
+    role_skills = [s.lower().strip() for s in role_skills_raw if s.strip()]
+
+    # Match
+    matched = list(set(user_skills) & set(role_skills))
+    match_pct = 0
+    if role_skills:
+        match_pct = int((len(matched) / len(role_skills)) * 100)
+        if len(matched) >= 3:
+            match_pct += 10
+        match_pct = min(match_pct, 100)
+
+    return JSONResponse({
+        "role": role,
+        "match": match_pct,
+        "role_skills": [s.title() for s in role_skills],
+        "matched_skills": [s.title() for s in matched]
+    })

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block topbar %}
+<div class="topbar">
+  <div class="topbar-breadcrumb">
+    <a href="/">careerforge</a>
+    <span>/</span>
+    <span>mock-interview</span>
+  </div>
+  <div class="topbar-right">
+    <div class="status-pill">
+      <span class="dot-live"></span>
+      Groq ready
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="module2-container">
+
+  <!-- ============================
+       ROUND SELECTION SCREEN
+  ============================= -->
+  <div id="roundSelectionScreen" class="round-selection-screen">
+
+    <div class="round-selection-inner">
+
+      <div class="round-sel-eyebrow">
+        <span class="round-sel-dot"></span>
+        Mock Interview — {{ role or "Software Engineer" }}
+      </div>
+
+      <h1 class="round-sel-title">
+        Choose your<br><em>interview round</em>
+      </h1>
+
+      <p class="round-sel-sub">
+        Select the type of round you want to practice.
+        Each round is tailored to what real interviewers ask.
+      </p>
+
+      <!-- ROUND CARDS GRID -->
+      <div class="round-cards-grid">
+
+        <button class="round-card" onclick="selectRound('screening', this)">
+          <div class="round-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <div class="round-card-tag tag-amber">Entry Point</div>
+          <div class="round-card-title">Initial Screening</div>
+          <div class="round-card-desc">Quick 15-min intro call. Background, motivation, communication skills, and culture fit basics.</div>
+          <div class="round-card-pills">
+            <span>Background</span><span>Motivation</span><span>Communication</span>
+          </div>
+        </button>
+
+        <button class="round-card" onclick="selectRound('technical', this)">
+          <div class="round-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <div class="round-card-tag tag-green">Core Round</div>
+          <div class="round-card-title">Technical Round</div>
+          <div class="round-card-desc">Deep-dive into your tech stack, architecture decisions, tools, and domain knowledge from your resume.</div>
+          <div class="round-card-pills">
+            <span>Tech Stack</span><span>Architecture</span><span>Tools</span>
+          </div>
+        </button>
+
+        <button class="round-card" onclick="selectRound('coding', this)">
+          <div class="round-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="round-card-tag tag-red">Problem Solving</div>
+          <div class="round-card-title">Coding / DSA Round</div>
+          <div class="round-card-desc">Algorithm, data structures, and coding problems relevant to your domain and role level.</div>
+          <div class="round-card-pills">
+            <span>Algorithms</span><span>DSA</span><span>Optimization</span>
+          </div>
+        </button>
+
+        <button class="round-card" onclick="selectRound('project', this)">
+          <div class="round-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+          </div>
+          <div class="round-card-tag tag-green">Resume Deep-Dive</div>
+          <div class="round-card-title">Project Round</div>
+          <div class="round-card-desc">Detailed questions about your projects — decisions made, trade-offs, challenges, tech choices and outcomes.</div>
+          <div class="round-card-pills">
+            <span>Projects</span><span>Trade-offs</span><span>Outcomes</span>
+          </div>
+        </button>
+
+        <button class="round-card" onclick="selectRound('behavioral', this)">
+          <div class="round-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="round-card-tag tag-amber">Soft Skills</div>
+          <div class="round-card-title">Behavioural Round</div>
+          <div class="round-card-desc">STAR-format situational questions about leadership, conflict, failure, teamwork, and growth mindset.</div>
+          <div class="round-card-pills">
+            <span>STAR Method</span><span>Leadership</span><span>Teamwork</span>
+          </div>
+        </button>
+
+        <button class="round-card" onclick="selectRound('system_design', this)">
+          <div class="round-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/>
+            </svg>
+          </div>
+          <div class="round-card-tag tag-red">Senior Level</div>
+          <div class="round-card-title">System Design</div>
+          <div class="round-card-desc">Design scalable systems relevant to your tech stack — databases, APIs, caching, microservices, load balancing.</div>
+          <div class="round-card-pills">
+            <span>Scalability</span><span>Architecture</span><span>APIs</span>
+          </div>
+        </button>
+
+        <button class="round-card" onclick="selectRound('hr', this)">
+          <div class="round-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="round-card-tag tag-green">Culture Fit</div>
+          <div class="round-card-title">HR Round</div>
+          <div class="round-card-desc">Salary expectations, work style, career goals, strengths and weaknesses, notice period and availability.</div>
+          <div class="round-card-pills">
+            <span>Salary</span><span>Career Goals</span><span>Culture Fit</span>
+          </div>
+        </button>
+
+        <button class="round-card round-card--discussion" onclick="selectRound('discussion', this)">
+          <div class="round-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="round-card-tag tag-amber">Open Session</div>
+          <div class="round-card-title">General Discussion</div>
+          <div class="round-card-desc">Casual conversation — get career advice, skill suggestions, roadmap guidance, or talk through your resume freely.</div>
+          <div class="round-card-pills">
+            <span>Career Advice</span><span>Roadmap</span><span>Suggestions</span>
+          </div>
+        </button>
+
+      </div>
+
+      <!-- START BTN -->
+      <button class="round-start-btn" id="startInterviewBtn" disabled onclick="startInterview()">
+        Start Interview
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ============================
+       CHAT SCREEN (hidden initially)
+  ============================= -->
+  <div id="chatScreen" class="chat-screen" style="display:none;">
+
+    <!-- HEADER -->
+    <div class="module2-header">
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <button onclick="backToRounds()" class="back-btn" title="Change round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div>
+          <div class="module2-title">AI Mock Interview</div>
+          <div class="module2-subtitle" id="chatSubtitle">Technical Round</div>
+        </div>
+      </div>
+
+      <div class="module2-controls">
+        <button onclick="startVoice()" class="voice-btn" title="Voice input">
+          🎙️
+        </button>
+      </div>
+    </div>
+
+    <!-- CHAT AREA -->
+    <div class="chat-container" id="chatBox">
+      <div class="bot">
+        👋 Welcome to your AI Interview.<br><br>
+        I will ask questions based on your resume and the round you selected.<br><br>
+        Type anything or press <strong>Send</strong> to get your first question 🚀
+      </div>
+    </div>
+
+    <!-- INPUT AREA -->
+    <div class="input-container">
+      <input
+        type="text"
+        id="inputBox"
+        placeholder="Type your answer..."
+        autocomplete="off"
+      >
+      <button id="sendBtn">Send</button>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+{% endblock %}

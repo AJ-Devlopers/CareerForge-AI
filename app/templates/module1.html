@@ -176,4 +176,148 @@
   </div>
 </div>
 
+<!-- CUSTOM ROLE INPUT -->
+<div style="margin-top:2rem;">
+  <div class="section-head">Add a Custom Role</div>
+
+  <div style="
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1.5rem;
+  ">
+    <p style="font-size:0.75rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;">
+      Don't see your target role? Enter it below — our AI will auto-detect required skills and match them against your resume.
+    </p>
+
+    <div style="display:flex;gap:0.75rem;margin-bottom:1rem;">
+      <input
+        type="text"
+        id="customRoleInput"
+        placeholder="e.g. ML Engineer, DevOps, Product Manager..."
+        style="
+          flex:1;padding:0.75rem 1rem;
+          background:var(--surface2);
+          border:1px solid var(--border2);
+          border-radius:10px;
+          color:var(--text);
+          font-family:var(--mono);
+          font-size:0.75rem;
+          outline:none;
+        "
+      >
+      <button onclick="analyzeCustomRole()" style="
+        font-family:var(--mono);font-size:0.72rem;
+        padding:0.75rem 1.5rem;
+        background:var(--accent);color:var(--bg);
+        border:none;border-radius:10px;
+        cursor:pointer;transition:all 0.2s;
+        white-space:nowrap;font-weight:500;
+      ">
+        Analyze Role →
+      </button>
+    </div>
+
+    <!-- RESULTS -->
+      <div class="results" id="results">
+
+        <!-- ATS Score -->
+        <div class="ats-header">
+          <div class="ats-title">ATS Score</div>
+          <span class="ats-badge" id="atsBadge"></span>
+        </div>
+
+        <div class="score-display">
+          <div class="score-num" id="scoreNum">0</div>
+          <div class="score-denom">/ 100</div>
+        </div>
+
+        <div class="score-bar">
+          <div class="score-fill fill-amber" id="scoreFill" style="width:0%"></div>
+        </div>
+
+        <!-- Stats Grid — IDs must match JS: skillCount + topMatch -->
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="result-card-label">Skills found</div>
+            <div class="result-card-val" id="skillCount" style="color:var(--accent)">0</div>
+          </div>
+          <div class="result-card">
+            <div class="result-card-label">Top match</div>
+            <div class="result-card-val" id="topMatch" style="color:var(--green)">0%</div>
+          </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="section-head">Skills detected</div>
+        <div class="skills-grid" id="skillsGrid"></div>
+
+        <!-- Roles -->
+        <div class="section-head">Role suggestions</div>
+        <div class="roles-list" id="rolesList"></div>
+
+        <!-- ── CUSTOM ROLE ── -->
+        <div class="custom-role-section">
+          <div class="section-head">Add a Custom Role</div>
+          <div class="custom-role-box">
+
+            <p class="custom-role-hint">
+              Don't see your target role? Enter it below — AI will auto-detect required skills
+              and match them against your resume.
+            </p>
+
+            <div class="custom-role-input-row">
+              <input
+                type="text"
+                id="customRoleInput"
+                class="custom-role-input"
+                placeholder="e.g. ML Engineer, DevOps, Product Manager..."
+              >
+              <button class="custom-role-btn" onclick="analyzeCustomRole()">
+                Analyze →
+              </button>
+            </div>
+
+            <!-- Loading -->
+            <div class="custom-role-loading" id="customRoleLoading">
+              <div class="custom-role-loading-dot"></div>
+              <span id="customRoleLoadingText">Fetching required skills via AI...</span>
+            </div>
+
+            <!-- Result -->
+            <div class="custom-role-result" id="customRoleResult">
+              <div class="custom-role-result-header">
+                <div>
+                  <div class="custom-role-result-name" id="customRoleName"></div>
+                  <div class="custom-role-result-sublabel">AI-matched skills</div>
+                </div>
+                <div class="custom-role-result-pct" id="customRoleMatch"></div>
+              </div>
+
+              <div class="custom-role-bar-wrap">
+                <div class="custom-role-bar-fill" id="customRoleBar"></div>
+              </div>
+
+              <div class="custom-role-skills-wrap" id="customRoleSkills"></div>
+
+              <button class="custom-role-start-btn" id="customRoleInterviewBtn">
+                Start Interview for this Role →
+              </button>
+            </div>
+
+          </div>
+        </div>
+        <!-- ── END CUSTOM ROLE ── -->
+
+      </div>
+      
+
+    <!-- Loading state -->
+    <div id="customRoleLoading" style="display:none;font-family:var(--mono);font-size:0.68rem;color:var(--accent);padding:0.5rem 0;">
+      <span id="customRoleLoadingText">⏳ Fetching required skills via AI...</span>
+    </div>
+
+  </div>
+</div>
+
 {% endblock %}
