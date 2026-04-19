@@ -1904,6 +1904,353 @@ footer{
   border-color: rgba(248,113,113,0.3);
   color: var(--red);
 }
+/* ============================================================
+   ADD THESE STYLES at the bottom of style.css
+   (before the @media blocks)
+   ============================================================ */
+
+
+/* ── TOP RESET BTN (fixed) ── */
+.top-reset-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.top-reset-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+}
+
+.top-reset-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(248,113,113,0.08);
+}
+
+.top-reset-btn.active {
+  border-color: rgba(248,113,113,0.3);
+  color: var(--red);
+}
+
+
+/* ── ROLE GATE SCREEN ── */
+.role-gate-screen {
+  flex: 1;
+  overflow-y: auto;
+  padding: 3rem 2.5rem 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.role-gate-inner {
+  max-width: 560px;
+  width: 100%;
+  padding-top: 2rem;
+}
+
+.role-gate-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.role-gate-skills {
+  margin-top: 0.5rem;
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.4s ease both;
+}
+
+.role-gate-hint {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 1.5rem;
+}
+
+.role-gate-discussion-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.role-gate-discussion-btn:hover {
+  color: var(--text);
+}
+
+
+/* ── ROLE TAB (on round selection screen) ── */
+.role-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem 0.45rem 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+}
+
+.role-tab-icon {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+}
+
+.role-tab-label {
+  color: var(--muted);
+}
+
+.role-tab-value {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.role-tab-change {
+  margin-left: 0.25rem;
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.role-tab-change:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+
+/* ── CHAT ROLE PILL (in chat header) ── */
+.chat-role-pill {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  color: var(--accent);
+  background: rgba(232,213,163,0.06);
+  letter-spacing: 0.04em;
+}
+
+
+/* ── SEND BUTTON (icon) ── */
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.send-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.send-btn:hover {
+  background: var(--white);
+  transform: translateY(-1px);
+}
+
+
+/* ── VOICE INPUT BUTTON ── */
+.voice-input-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border2);
+  background: var(--surface);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.voice-input-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* inner wrapper that holds mic icon OR waves */
+.voice-btn-inner {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-icon-mic {
+  width: 18px;
+  height: 18px;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+/* sound wave bars — hidden by default */
+.voice-waves {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.voice-waves span {
+  display: block;
+  width: 2.5px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: voiceWave 0.8s ease-in-out infinite;
+}
+
+.voice-waves span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
+.voice-waves span:nth-child(2) { height: 12px; animation-delay: 0.1s;  }
+.voice-waves span:nth-child(3) { height: 18px; animation-delay: 0.2s;  }
+.voice-waves span:nth-child(4) { height: 12px; animation-delay: 0.3s;  }
+.voice-waves span:nth-child(5) { height: 6px;  animation-delay: 0.4s;  }
+
+@keyframes voiceWave {
+  0%, 100% { transform: scaleY(1);   }
+  50%       { transform: scaleY(0.4); }
+}
+
+/* ACTIVE STATE — show waves, hide mic, glow red */
+.voice-input-btn.voice-active {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(248,113,113,0.08);
+  box-shadow: 0 0 0 3px rgba(248,113,113,0.12);
+}
+
+.voice-input-btn.voice-active .voice-icon-mic {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.voice-input-btn.voice-active .voice-waves {
+  opacity: 1;
+}
+
+
+/* ── TYPING INDICATOR ── */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px !important;
+}
+
+.typing-indicator span {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0);    opacity: 0.4; }
+  30%            { transform: translateY(-6px); opacity: 1;   }
+}
+
+
+/* ── MSG STYLES (override old ones) ── */
+.msg {
+  max-width: 70%;
+  line-height: 1.65;
+  font-size: 0.85rem;
+  border-radius: 14px;
+  padding: 0.8rem 1.1rem;
+  animation: fadeUp 0.3s ease both;
+}
+
+.msg.bot {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.msg.user {
+  background: var(--accent);
+  color: var(--bg);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+/* ── INPUT CONTAINER (updated) ── */
+.input-container {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+  align-items: center;
+}
+
+#inputBox {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#inputBox:focus {
+  border-color: var(--accent);
+}
+
+#inputBox::placeholder {
+  color: var(--muted);
+}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
