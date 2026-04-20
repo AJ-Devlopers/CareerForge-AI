@@ -27,7 +27,6 @@
 
   <!-- ============================
        ROLE GATE SCREEN
-       shown if no role from M1
   ============================= -->
   <div id="roleGateScreen" class="role-gate-screen" style="display:none;">
     <div class="role-gate-inner">
@@ -59,7 +58,6 @@
         </button>
       </div>
 
-      <!-- skill chips appear here -->
       <div id="roleGateSkills" class="role-gate-skills" style="display:none;">
         <div class="section-head" style="margin-bottom:0.6rem">Relevant skills for this role</div>
         <div id="roleGateSkillChips" class="skills-grid"></div>
@@ -77,10 +75,8 @@
        ROUND SELECTION SCREEN
   ============================= -->
   <div id="roundSelectionScreen" class="round-selection-screen" style="display:none;">
-
     <div class="round-selection-inner">
 
-      <!-- ROLE TAB (autofilled from M1 or manual) -->
       <div class="role-tab" id="roleTab">
         <div class="role-tab-icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -104,7 +100,6 @@
         Each round is tailored to what real interviewers ask.
       </p>
 
-      <!-- ROUND CARDS GRID -->
       <div class="round-cards-grid">
 
         <button class="round-card" onclick="selectRound('screening', this)">
@@ -203,7 +198,6 @@
   ============================= -->
   <div id="chatScreen" class="chat-screen" style="display:none;">
 
-    <!-- HEADER -->
     <div class="module2-header">
       <div style="display:flex;align-items:center;gap:0.75rem;">
         <button onclick="backToRounds()" class="back-btn" title="Change round">
@@ -214,19 +208,12 @@
           <div class="module2-subtitle" id="chatSubtitle">Technical Round</div>
         </div>
       </div>
-
-      <!-- role pill in header -->
       <div class="chat-role-pill" id="chatRolePill">—</div>
-
-      <div class="module2-controls">
-        <!-- empty, voice is now near input -->
-      </div>
+      <div class="module2-controls"></div>
     </div>
 
-    <!-- CHAT AREA -->
     <div class="chat-container" id="chatBox"></div>
 
-    <!-- INPUT AREA -->
     <div class="input-container">
       <input
         type="text"
@@ -234,8 +221,6 @@
         placeholder="Type your answer…"
         autocomplete="off"
       />
-
-      <!-- VOICE BUTTON -->
       <button id="voiceBtn" class="voice-input-btn" onclick="toggleVoice()" title="Voice input">
         <span class="voice-btn-inner">
           <svg class="voice-icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -249,7 +234,6 @@
           </span>
         </span>
       </button>
-
       <button id="sendBtn" class="send-btn" onclick="sendMessage()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="22" y1="2" x2="11" y2="13"/>
@@ -261,7 +245,18 @@
   </div>
 
 </div>
+<!-- Jinja2 data for JS -->
 <script>
+    window._hasResume     = {{ 'true' if has_resume else 'false' }};
+    window._candidateName = "{{ candidate_name | default('') }}";
+    window._skillsFound   = {{ skills_found | tojson | default('[]') }};
+    window._atsScore      = "{{ ats_score | default('') }}";
+    window._resumeText    = "{{ resume_text[:300] | replace('\n',' ') | replace('"', '\\"') | default('') }}";
+</script>
+
+{% raw %}
+<script>
+
 const ROUND_LABELS = {
   screening:    'Initial Screening',
   technical:    'Technical Round',
@@ -281,32 +276,46 @@ let voiceSilenceTimer = null;
 
 // ── on load ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
-  const params  = new URLSearchParams(window.location.search);
-  const urlRole = params.get('role') || '';
-  const ssRole  = sessionStorage.getItem('selectedRole') || '';
-  currentRole   = urlRole || ssRole;
+  try {
+    const params  = new URLSearchParams(window.location.search);
+    const urlRole = params.get('role') || '';
+    const ssRole  = sessionStorage.getItem('selectedRole') || '';
+    currentRole   = urlRole || ssRole;
 
-  if (currentRole) {
-    showRoundSelection(currentRole);
-  } else {
-    document.getElementById('roleGateScreen').style.display = 'flex';
+    if (currentRole) {
+      showRoundSelection(currentRole);
+    } else {
+      document.getElementById('roleGateScreen').style.display = 'flex';
+    }
+
+    const mri = document.getElementById('manualRoleInput');
+    if (mri) {
+      mri.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') confirmManualRole();
+      });
+    }
+
+    const ib = document.getElementById('inputBox');
+    if (ib) {
+      ib.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+      });
+    }
+
+  } catch(err) {
+    console.error('INIT ERROR:', err);
+    // fallback — just show role gate
+    const rg = document.getElementById('roleGateScreen');
+    if (rg) rg.style.display = 'flex';
   }
-
-  document.getElementById('manualRoleInput').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') confirmManualRole();
-  });
-
-  document.getElementById('inputBox').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  });
 });
-
 // ── role gate ────────────────────────────────────────────────
 async function confirmManualRole() {
   const input = document.getElementById('manualRoleInput');
-  const role  = input.value.trim();
-  if (!role) { input.focus(); return; }
+  const role  = input ? input.value.trim() : '';
+  if (!role) { if (input) input.focus(); return; }
   currentRole = role;
+  sessionStorage.setItem('selectedRole', role);
 
   try {
     const res  = await fetch('/module1/analyze-custom-role', {
@@ -317,10 +326,17 @@ async function confirmManualRole() {
     const data = await res.json();
     if (data.role_skills && data.role_skills.length) {
       const chipsEl = document.getElementById('roleGateSkillChips');
-      chipsEl.innerHTML = data.role_skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
-      document.getElementById('roleGateSkills').style.display = 'block';
+      if (chipsEl) {
+        chipsEl.innerHTML = data.role_skills
+          .map(s => `<span class="skill-tag">${s}</span>`)
+          .join('');
+      }
+      const skillsEl = document.getElementById('roleGateSkills');
+      if (skillsEl) skillsEl.style.display = 'block';
     }
-  } catch(e) {}
+  } catch(e) {
+    console.warn('role skills fetch failed:', e);
+  }
 
   setTimeout(function () { showRoundSelection(role); }, 900);
 }
@@ -330,9 +346,8 @@ function useGeneralDiscussion() {
   showRoundSelection('General');
   setTimeout(function () {
     document.querySelectorAll('.round-card').forEach(function (c) {
-      if (c.querySelector('.round-card-title').textContent.includes('General')) {
-        selectRound('discussion', c);
-      }
+      const t = c.querySelector('.round-card-title');
+      if (t && t.textContent.includes('General')) selectRound('discussion', c);
     });
   }, 100);
 }
@@ -340,14 +355,17 @@ function useGeneralDiscussion() {
 function changeRole() {
   document.getElementById('roundSelectionScreen').style.display = 'none';
   document.getElementById('roleGateScreen').style.display       = 'flex';
-  document.getElementById('manualRoleInput').value              = '';
-  document.getElementById('roleGateSkills').style.display       = 'none';
+  const mri = document.getElementById('manualRoleInput');
+  if (mri) mri.value = '';
+  const gs = document.getElementById('roleGateSkills');
+  if (gs) gs.style.display = 'none';
 }
 
 function showRoundSelection(role) {
   document.getElementById('roleGateScreen').style.display       = 'none';
   document.getElementById('roundSelectionScreen').style.display = 'flex';
-  document.getElementById('roleTabValue').textContent           = role;
+  const rtv = document.getElementById('roleTabValue');
+  if (rtv) rtv.textContent = role || '—';
 }
 
 // ── round selection ──────────────────────────────────────────
@@ -355,62 +373,109 @@ function selectRound(round, el) {
   selectedRound = round;
   document.querySelectorAll('.round-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
-  document.getElementById('startInterviewBtn').disabled = false;
+  const btn = document.getElementById('startInterviewBtn');
+  if (btn) btn.disabled = false;
 }
 
 function startInterview() {
   if (!selectedRound) return;
-  document.getElementById('chatSubtitle').textContent           = ROUND_LABELS[selectedRound] || selectedRound;
-  document.getElementById('chatRolePill').textContent           = currentRole;
+
+  const sub  = document.getElementById('chatSubtitle');
+  const pill = document.getElementById('chatRolePill');
+  if (sub)  sub.textContent  = ROUND_LABELS[selectedRound] || selectedRound;
+  if (pill) pill.textContent = currentRole;
+
   document.getElementById('roundSelectionScreen').style.display = 'none';
   document.getElementById('chatScreen').style.display           = 'flex';
-  document.getElementById('chatBox').innerHTML                  = '';
+
+  const chatBox = document.getElementById('chatBox');
+  if (chatBox) chatBox.innerHTML = '';
+
   botGreet();
+
+  setTimeout(function () {
+    const ib = document.getElementById('inputBox');
+    if (ib) ib.focus();
+  }, 200);
 }
 
-// ── FIX 1: stop voice when going back ───────────────────────
 function backToRounds() {
-  stopVoice();   // ← always kill voice first
+  stopVoice();
   document.getElementById('chatScreen').style.display           = 'none';
   document.getElementById('roundSelectionScreen').style.display = 'flex';
 }
 
 // ── greeting ─────────────────────────────────────────────────
 function botGreet() {
+  const hasResume     = window._hasResume     || false;
+  const candidateName = window._candidateName || '';
+  const skillsFound   = window._skillsFound   || [];
+  const atsScore      = window._atsScore      || '';
+  const firstName     = candidateName ? candidateName.split(' ')[0] : '';
+
   if (selectedRound === 'discussion') {
-    // FIX 2: general discussion → friendly chatbot greeting
-    appendBotMessage(`Hey! 👋 I'm your CareerForge AI assistant.\n\nAsk me <strong>anything</strong> — career advice, skill roadmaps, resume tips, salary negotiation, interview prep, tech stacks, or just talk. I'm here to help. What's on your mind?`);
+    if (hasResume && firstName) {
+      appendBotMessage(
+        `Hey ${firstName}! 👋 I've gone through your resume.\n\n` +
+        `I can see you've got skills in **${skillsFound.slice(0,4).join(', ')}** — solid foundation!\n\n` +
+        `Your ATS score is **${atsScore}/100**. Ask me anything — career advice, roadmap, interview tips, or anything else. What's on your mind?`
+      );
+    } else {
+      appendBotMessage(
+        `Hey! 👋 I'm your CareerForge AI assistant.\n\n` +
+        `Ask me **anything** — career advice, skill roadmaps, resume tips, salary negotiation, interview prep, or just talk freely.\n\n` +
+        `What's on your mind?`
+      );
+    }
   } else {
     const roundLabel = ROUND_LABELS[selectedRound] || selectedRound;
-    appendBotMessage(`👋 Hi! Welcome to your <strong>${roundLabel}</strong> for the <strong>${currentRole}</strong> role.\n\nI'll ask you questions one at a time and give you feedback before moving on.\n\nWhenever you're ready — just say "start" or type anything to begin! 🚀`);
+    if (hasResume && firstName) {
+      appendBotMessage(
+        `Hey ${firstName}! 👋 I've reviewed your resume for this **${roundLabel}**.\n\n` +
+        `I'll ask questions tailored to your background — your projects, your skills in **${skillsFound.slice(0,3).join(', ')}**, and what matters for the **${currentRole}** role.\n\n` +
+        `I'll give you quick feedback after each answer, then move to the next question.\n\n` +
+        `Ready? Just say **"start"** or type anything! 🚀`
+      );
+    } else {
+      appendBotMessage(
+        `👋 Hi! Welcome to your **${roundLabel}** for the **${currentRole}** role.\n\n` +
+        `I'll ask you questions one at a time and give you feedback before moving on.\n\n` +
+        `Whenever you're ready — just say **"start"** or type anything to begin! 🚀`
+      );
+    }
   }
 }
+
 
 // ── send message ─────────────────────────────────────────────
 async function sendMessage(overrideText) {
   const inputBox = document.getElementById('inputBox');
-  const message  = (overrideText !== undefined ? overrideText : inputBox.value).trim();
+  const message  = (overrideText !== undefined
+    ? overrideText
+    : (inputBox ? inputBox.value : '')
+  ).trim();
   if (!message) return;
 
   appendUserMessage(message);
-  inputBox.value = '';
+  if (inputBox) inputBox.value = '';
 
   const typingEl = appendTyping();
 
-  // FIX 2: general discussion → hit different endpoint (plain chat)
   const endpoint = (selectedRound === 'discussion')
     ? '/module2/discuss'
     : '/module2/next-question';
 
   try {
-    const res  = await fetch(endpoint, {
+    const res = await fetch(endpoint, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
-        role:   currentRole,
-        round:  selectedRound,
-        answer: message,
-        message: message   // discuss endpoint uses "message" key
+        role:           currentRole,
+        round:          selectedRound,
+        answer:         message,
+        message:        message,
+        resume_text:    window._resumeText    || '',
+        candidate_name: window._candidateName || '',
       })
     });
     const data = await res.json();
@@ -421,12 +486,13 @@ async function sendMessage(overrideText) {
   } catch (err) {
     removeTyping(typingEl);
     appendBotMessage('⚠️ Error getting response. Please try again.');
+    console.error('sendMessage error:', err);
   }
 }
-
 // ── message helpers ──────────────────────────────────────────
 function appendUserMessage(text) {
   const chatBox = document.getElementById('chatBox');
+  if (!chatBox) return;
   const div = document.createElement('div');
   div.className   = 'msg user';
   div.textContent = text;
@@ -436,6 +502,7 @@ function appendUserMessage(text) {
 
 function appendBotMessage(text) {
   const chatBox = document.getElementById('chatBox');
+  if (!chatBox) return;
   const div = document.createElement('div');
   div.className = 'msg bot';
   div.innerHTML = text
@@ -447,6 +514,7 @@ function appendBotMessage(text) {
 
 function appendTyping() {
   const chatBox = document.getElementById('chatBox');
+  if (!chatBox) return null;
   const div = document.createElement('div');
   div.className = 'msg bot typing-indicator';
   div.innerHTML = '<span></span><span></span><span></span>';
@@ -459,7 +527,7 @@ function removeTyping(el) {
   if (el && el.parentNode) el.parentNode.removeChild(el);
 }
 
-// ── VOICE ────────────────────────────────────────────────────
+// ── voice ────────────────────────────────────────────────────
 function toggleVoice() {
   voiceActive ? stopVoice() : startVoice();
 }
@@ -483,19 +551,30 @@ function startVoice() {
       if (event.results[i].isFinal) final   += event.results[i][0].transcript;
       else                          interim += event.results[i][0].transcript;
     }
-    document.getElementById('inputBox').value = final || interim;
+    const ib = document.getElementById('inputBox');
+    if (ib) ib.value = final || interim;
+
     if (final) {
       clearTimeout(voiceSilenceTimer);
       voiceSilenceTimer = setTimeout(function () {
         if (voiceActive && final.trim()) {
           sendMessage(final.trim());
-          document.getElementById('inputBox').value = '';
+          const ib2 = document.getElementById('inputBox');
+          if (ib2) ib2.value = '';
         }
       }, 1800);
     }
   };
-  recognition.onerror = function () { stopVoice(); };
-  recognition.onend   = function () { if (voiceActive) recognition.start(); };
+
+  recognition.onerror = function (e) {
+    console.warn('Voice error:', e.error);
+    stopVoice();
+  };
+
+  recognition.onend = function () {
+    if (voiceActive) recognition.start();
+  };
+
   recognition.start();
 }
 
@@ -503,12 +582,12 @@ function stopVoice() {
   voiceActive = false;
   clearTimeout(voiceSilenceTimer);
   if (recognition) {
-    recognition.onend = null;   // prevent auto-restart
+    recognition.onend = null;
     recognition.stop();
     recognition = null;
   }
   setVoiceUI(false);
-  window.speechSynthesis && window.speechSynthesis.cancel(); // stop TTS too
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
 }
 
 function setVoiceUI(active) {
@@ -526,5 +605,8 @@ function speakText(text) {
   utt.pitch = 1;
   window.speechSynthesis.speak(utt);
 }
+
 </script>
+{% endraw %}
+
 {% endblock %}

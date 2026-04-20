@@ -27,7 +27,10 @@ app = FastAPI(title="CareerForge AI")
 # =============================
 app.add_middleware(
     SessionMiddleware,
-    secret_key=os.getenv("SECRET_KEY", "supersecretkey")
+    secret_key=os.getenv("SECRET_KEY", "supersecretkey"),
+    max_age=7200,
+    same_site="lax",
+    https_only=False
 )
 
 

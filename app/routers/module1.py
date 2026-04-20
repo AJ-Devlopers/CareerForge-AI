@@ -41,12 +41,22 @@ async def upload_resume(request: Request, file: UploadFile = File(...)):
     session_id = str(uuid.uuid4())
     report_store[session_id] = result
 
-    request.session.clear()
     request.session["session_id"] = session_id
+    request.session["resume_data"] = {
+        "name":         result.get("name", ""),
+        "ats_score":    result.get("ats_score", ""),
+        "skills_found": result.get("skills_found", []),
+        "resume_text":  result.get("resume_text", ""),
+    }
+    print("SESSION DATA:", request.session.get("resume_data"))
+    print("SKILLS SAVED:", request.session.get("resume_data", {}).get("skills_found", [])[:5])
+
+    # ── ADD THIS DEBUG PRINT ──
+    print("✅ SESSION SET:", request.session.get("resume_data", {}).get("name"))
+    print("✅ SESSION ID:", session_id)
+    print("✅ SKILLS:", result.get("skills_found", []))
 
     return JSONResponse(content=result)
-
-
 # =============================
 # CLEAR SESSION
 # =============================
@@ -59,12 +69,6 @@ async def clear_session(request: Request):
     return RedirectResponse(url="/module1", status_code=303)
 
 
-# =============================
-# CUSTOM ROLE ANALYSIS
-# ✅ Route is /analyze-custom-role
-# Because router is mounted at /module1,
-# full path = /module1/analyze-custom-role
-# =============================
 @router.post("/analyze-custom-role")
 async def analyze_custom_role(request: Request):
     try:
@@ -74,22 +78,42 @@ async def analyze_custom_role(request: Request):
         if not role:
             return JSONResponse({"error": "Role required"}, status_code=400)
 
-        session_id = request.session.get("session_id")
-        result     = report_store.get(session_id)
+        # ── Pull user skills from report_store OR session fallback ──
+        resume_data = request.session.get("resume_data", {})
 
-        user_skills = []
-        if result:
-            user_skills = [s.lower() for s in result.get("skills_found", [])]
+        print("📦 SESSION DATA:", resume_data)
 
-        # AI call to get required skills for this role
+        user_skills = [
+            s.lower().strip()
+            for s in resume_data.get("skills_found", [])
+        ]  
+
+        print(f"🔍 Custom role check — user skills count: {len(user_skills)}, role: {role}")
+
+        # ── AI call to get required skills for this role ──
         role_skills_raw = generate_role_skills(role)
 
         if not role_skills_raw:
             raise Exception("Empty skills from LLM")
 
-        role_skills = [s.lower().strip() for s in role_skills_raw if s.strip()]
+        # Normalize: lowercase, strip, remove empty, remove punctuation artifacts
+        role_skills = list(set(
+            s.lower().strip().strip(".,;:")
+            for s in role_skills_raw
+            if s.strip()
+        ))
 
-        matched = list(set(user_skills) & set(role_skills))
+        print(f"🔍 Role skills fetched: {role_skills[:8]}")
+        print(f"🔍 User skills sample: {user_skills[:8]}")
+
+        # ── Fuzzy-ish match: check if any user skill is contained in or contains role skill ──
+        matched = []
+        for us in user_skills:
+            for rs in role_skills:
+                if us == rs or us in rs or rs in us:
+                    if rs not in matched:
+                        matched.append(rs)
+                    break
 
         match_pct = 0
         if role_skills:
@@ -97,6 +121,8 @@ async def analyze_custom_role(request: Request):
             if len(matched) >= 3:
                 match_pct += 10
             match_pct = min(match_pct, 100)
+
+        print(f"✅ Match: {match_pct}%, matched: {matched[:5]}")
 
         return JSONResponse({
             "role":           role,
@@ -106,5 +132,5 @@ async def analyze_custom_role(request: Request):
         })
 
     except Exception as e:
-        print("❌ ERROR:", str(e))
+        print("❌ ERROR in analyze-custom-role:", str(e))
         return JSONResponse({"error": str(e)}, status_code=500)

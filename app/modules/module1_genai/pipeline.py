@@ -82,5 +82,6 @@ def run_module1_pipeline(file) -> dict:
         "roles":          roles[:5],
 
         # ── Preview ──
+        "resume_text": text,   # 🔥 MUST ADD
         "resume_preview": text[:300].strip() + "..."
     }

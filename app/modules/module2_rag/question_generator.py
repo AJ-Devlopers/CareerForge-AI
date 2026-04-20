@@ -12,42 +12,44 @@ load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-
-
 def generate_question(
     role: str,
     round_type: str,
     context: str,
-    asked_questions: list = None,
+    asked_questions: list = [],
     language: str = "English"
 ) -> str:
 
-    asked_list = asked_questions or []
-    asked_text = "\n".join(f"- {q}" for q in asked_list[-10:]) if asked_list else "None yet."
+    asked_text = "\n".join(f"- {q[:120]}" for q in asked_questions[-6:]) if asked_questions else "None yet"
 
-    prompt = f"""You are a professional {round_type} interviewer for a {role} position.
+    system = f"""You are a friendly, experienced interviewer conducting a {round_type} interview for a {role} role.
 
-Candidate's resume context (use this to make questions specific and relevant):
-{context}
+RESUME/CONTEXT:
+{context[:3000]}
 
-Questions already asked (DO NOT repeat these or ask anything similar):
+ALREADY ASKED:
 {asked_text}
 
-Instructions:
-- Ask EXACTLY ONE new question
-- Make it specific to the candidate's resume context above when possible
-- Match the difficulty and style of a real {round_type} interview
-- Keep it concise — one clear question only
-- Language: {language}
-- Do NOT include any preamble, numbering, or prefix like "Question:"
+YOUR JOB:
+- Ask ONE new question, different from what's already been asked
+- If resume is available, ask about SPECIFIC things from it — their projects, tech they listed, companies they worked at
+- Keep it conversational — start with a short bridge phrase like:
+  "Great, now let's talk about...", "Moving on —", "Let me ask you about...", "I noticed in your resume that... can you walk me through...?"
+- Do NOT repeat any already-asked question
+- Do NOT give feedback here — just ask the question
+- Keep it to 1-3 sentences max
+- Sound like a real human interviewer, not a formal bot"""
 
-Output: Only the question itself.
-"""
-
-    res = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=150
-    )
-
-    return res.choices[0].message.content.strip()
+    try:
+        res = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user",   "content": "Ask the next interview question."}
+            ],
+            max_tokens=120
+        )
+        return res.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"❌ question gen error: {e}")
+        return f"Tell me about a challenging project you've worked on as a {role}."
