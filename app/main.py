@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -76,3 +76,19 @@ app.include_router(module2.router)
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+
+@app.post("/session/clear-all")
+async def clear_all_sessions(request: Request):
+    """Clears all module sessions — module1 report store, module2 interview results."""
+    from app.routers.module1 import report_store
+
+    # Clear module1 report store
+    session_id = request.session.get("session_id")
+    if session_id and session_id in report_store:
+        del report_store[session_id]
+
+    # Wipe entire server session (covers module2 interview_results, module2_session, etc.)
+    request.session.clear()
+
+    return JSONResponse({"status": "cleared"})

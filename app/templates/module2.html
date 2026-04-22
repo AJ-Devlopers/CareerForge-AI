@@ -30,7 +30,7 @@
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1.4rem 1.6rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -67,7 +67,7 @@
   letter-spacing: 0.08em; text-transform: uppercase;
 }
 .resume-card-skills {
-  display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.75rem;
+  display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.6rem;
 }
 .rc-skill {
   font-family: var(--mono); font-size: 0.6rem;
@@ -94,7 +94,121 @@
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
 }
 
-/* ── START / RESULT OVERLAY ── */
+/* ── ATTEMPTS HISTORY STRIP ── */
+.attempts-strip {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  display: none; /* shown via JS when attempts exist */
+}
+.attempts-strip-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+.attempts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.attempt-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  gap: 0.75rem;
+}
+.attempt-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.attempt-num {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  width: 70px;
+  flex-shrink: 0;
+}
+.attempt-round-name {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text);
+}
+.attempt-score-badge {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+.attempt-grade {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+
+/* ── FULL REPORT BUTTON (on round selection) ── */
+.full-report-strip {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.full-report-strip-text {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.full-report-strip-text strong {
+  color: var(--text);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.full-report-btn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  padding: 0.6rem 1.25rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  font-weight: 500;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.full-report-btn:hover {
+  background: var(--white);
+  transform: translateY(-1px);
+}
+
+/* ── CHAT START / RESULT OVERLAY ── */
 .chat-start-overlay {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
@@ -104,29 +218,24 @@
   z-index: 10; padding: 2rem; text-align: center;
   overflow-y: auto;
 }
-
 .chat-start-icon {
   width: 60px; height: 60px;
   border-radius: 14px;
   background: rgba(232,213,163,0.1);
   border: 1px solid rgba(232,213,163,0.2);
   display: flex; align-items: center; justify-content: center;
-  color: var(--accent);
-  flex-shrink: 0;
+  color: var(--accent); flex-shrink: 0;
 }
-
 .chat-start-title {
   font-family: var(--serif);
   font-weight: 700; font-size: 1.4rem;
   letter-spacing: -0.02em;
 }
-
 .chat-start-sub {
   font-family: var(--mono);
   font-size: 0.72rem; color: var(--muted);
   max-width: 360px; line-height: 1.65;
 }
-
 .chat-start-btn {
   font-family: var(--mono);
   font-size: 0.82rem; letter-spacing: 0.06em;
@@ -142,9 +251,8 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(232,213,163,0.25);
 }
-.chat-start-btn svg { width: 16px; height: 16px; }
 
-/* ── RESULT OVERLAY SPECIFIC ── */
+/* ── RESULT OVERLAY ── */
 .result-score-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -154,201 +262,122 @@
   align-items: center;
   gap: 1.25rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   text-align: left;
 }
-
 .result-score-big {
   font-family: var(--serif);
-  font-weight: 900;
-  font-size: 3.5rem;
-  letter-spacing: -0.04em;
-  line-height: 1;
+  font-weight: 900; font-size: 3.5rem;
+  letter-spacing: -0.04em; line-height: 1;
 }
-
 .result-score-denom {
   font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-top: 0.15rem;
+  font-size: 0.75rem; color: var(--muted); margin-top: 0.15rem;
 }
-
 .result-grade-pill {
   display: inline-block;
   font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
+  font-size: 0.6rem; letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 0.25rem 0.65rem;
   border-radius: 100px;
   margin-bottom: 0.4rem;
 }
-
 .result-summary-text {
-  font-size: 0.75rem;
-  color: var(--muted);
-  line-height: 1.6;
-  max-width: 220px;
+  font-size: 0.75rem; color: var(--muted);
+  line-height: 1.6; max-width: 220px;
 }
-
-/* mini breakdown in overlay */
 .result-mini-bars {
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  text-align: left;
+  width: 100%; max-width: 420px;
+  display: flex; flex-direction: column; gap: 0.4rem; text-align: left;
 }
-
 .result-mini-bar-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  display: flex; align-items: center; gap: 0.6rem;
 }
-
 .result-mini-label {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  color: var(--muted);
-  width: 110px;
-  flex-shrink: 0;
+  font-family: var(--mono); font-size: 0.58rem;
+  color: var(--muted); width: 110px; flex-shrink: 0;
   text-transform: capitalize;
 }
-
 .result-mini-track {
-  flex: 1;
-  height: 3px;
-  background: var(--surface2);
-  border-radius: 2px;
-  overflow: hidden;
+  flex: 1; height: 3px;
+  background: var(--surface2); border-radius: 2px; overflow: hidden;
 }
-
 .result-mini-fill {
-  height: 100%;
-  border-radius: 2px;
+  height: 100%; border-radius: 2px;
   transition: width 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-
 .result-mini-val {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  color: var(--muted);
-  width: 28px;
-  text-align: right;
-  flex-shrink: 0;
+  font-family: var(--mono); font-size: 0.58rem;
+  color: var(--muted); width: 28px; text-align: right; flex-shrink: 0;
 }
-
-/* result overlay action row */
 .result-action-row {
-  display: flex;
-  gap: 0.75rem;
-  width: 100%;
-  max-width: 400px;
+  display: flex; gap: 0.6rem;
+  width: 100%; max-width: 420px;
+  flex-wrap: wrap;
 }
-
 .result-action-btn {
   flex: 1;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  padding: 0.75rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  text-decoration: none;
+  font-family: var(--mono); font-size: 0.7rem;
+  letter-spacing: 0.04em; padding: 0.7rem 0.75rem;
+  border-radius: 10px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.4rem; text-decoration: none; min-width: 100px;
 }
-
 .result-action-primary {
-  background: var(--accent);
-  color: var(--bg);
-  border: none;
-  font-weight: 500;
+  background: var(--accent); color: var(--bg);
+  border: none; font-weight: 500;
 }
-.result-action-primary:hover {
-  background: var(--white);
-  transform: translateY(-1px);
-}
-
+.result-action-primary:hover { background: var(--white); transform: translateY(-1px); }
 .result-action-secondary {
-  background: transparent;
-  color: var(--muted);
+  background: transparent; color: var(--muted);
   border: 1px solid var(--border2);
 }
-.result-action-secondary:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
+.result-action-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ── END INTERVIEW BUTTON ── */
 .end-interview-btn {
-  font-family: var(--mono);
-  font-size: 0.65rem; letter-spacing: 0.05em;
-  padding: 0.4rem 0.9rem;
+  font-family: var(--mono); font-size: 0.65rem;
+  letter-spacing: 0.05em; padding: 0.4rem 0.9rem;
   border: 1px solid rgba(248,113,113,0.3);
-  border-radius: 8px;
-  background: transparent; color: var(--red);
+  border-radius: 8px; background: transparent; color: var(--red);
   cursor: pointer; transition: all 0.2s;
-  display: flex; align-items: center; gap: 0.4rem;
-  flex-shrink: 0;
+  display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0;
 }
-.end-interview-btn:hover {
-  background: rgba(248,113,113,0.08);
-  border-color: var(--red);
-}
+.end-interview-btn:hover { background: rgba(248,113,113,0.08); border-color: var(--red); }
 .end-interview-btn svg { width: 12px; height: 12px; }
 
 /* ── SCORING OVERLAY ── */
 .scoring-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 1rem;
+  align-items: center; justify-content: center; gap: 1rem;
 }
 .scoring-spinner {
   width: 52px; height: 52px;
   border: 3px solid var(--border2);
   border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  border-radius: 50%; animation: spin 0.8s linear infinite;
 }
 .scoring-text {
-  font-family: var(--mono);
-  font-size: 0.75rem; color: var(--muted);
-  letter-spacing: 0.08em;
+  font-family: var(--mono); font-size: 0.75rem;
+  color: var(--muted); letter-spacing: 0.08em;
 }
 
-/* ── CHAT SCREEN position fix ── */
+/* ── CHAT SCREEN ── */
 .chat-screen { position: relative; }
-
-/* ── INPUT HIDDEN UNTIL STARTED ── */
 .input-area-hidden { display: none !important; }
 
-/* ── ATTEMPT BADGE (shown after first attempt) ── */
-.attempt-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+/* ── ATTEMPT BADGE in header ── */
+.attempt-header-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
   padding: 0.25rem 0.65rem;
   border: 1px solid var(--border2);
-  border-radius: 100px;
-  color: var(--muted);
-}
-
-.attempt-badge .attempt-score-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
+  border-radius: 100px; color: var(--muted);
 }
 </style>
 
@@ -359,18 +388,11 @@
   ============================= -->
   <div id="roleGateScreen" class="role-gate-screen" style="display:none;">
     <div class="role-gate-inner">
-      <div class="round-sel-eyebrow">
-        <span class="round-sel-dot"></span>
-        No Resume Detected
-      </div>
+      <div class="round-sel-eyebrow"><span class="round-sel-dot"></span>No Resume Detected</div>
       <h2 class="round-sel-title">Enter your <em>target role</em></h2>
-      <p class="round-sel-sub">
-        You haven't uploaded a resume yet. Enter a role below to continue,
-        or use <strong>General Discussion</strong> for free-form career advice.
-      </p>
+      <p class="round-sel-sub">You haven't uploaded a resume yet. Enter a role below to continue, or use <strong>General Discussion</strong> for free-form career advice.</p>
       <div class="role-gate-input-row">
-        <input type="text" id="manualRoleInput" class="custom-role-input"
-          placeholder="e.g. Frontend Engineer, Data Analyst…" autocomplete="off"/>
+        <input type="text" id="manualRoleInput" class="custom-role-input" placeholder="e.g. Frontend Engineer, Data Analyst…" autocomplete="off"/>
         <button class="custom-role-btn" onclick="confirmManualRole()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
           Continue
@@ -380,9 +402,7 @@
         <div class="section-head" style="margin-bottom:0.6rem">Relevant skills for this role</div>
         <div id="roleGateSkillChips" class="skills-grid"></div>
       </div>
-      <p class="role-gate-hint">
-        No role? Use <button class="role-gate-discussion-btn" onclick="useGeneralDiscussion()">General Discussion ↗</button>
-      </p>
+      <p class="role-gate-hint">No role? Use <button class="role-gate-discussion-btn" onclick="useGeneralDiscussion()">General Discussion ↗</button></p>
     </div>
   </div>
 
@@ -393,6 +413,7 @@
   <div id="roundSelectionScreen" class="round-selection-screen" style="display:none;">
     <div class="round-selection-inner">
 
+      <!-- RESUME CARD -->
       {% if has_resume %}
       <div class="resume-card">
         <div class="resume-card-avatar">{{ candidate_name[0].upper() if candidate_name else '?' }}</div>
@@ -413,8 +434,8 @@
             <div class="rc-stat-val" style="color:{% if ats_score >= 75 %}var(--green){% elif ats_score >= 50 %}var(--amber){% else %}var(--red){% endif %}">{{ ats_score or '—' }}</div>
             <div class="rc-stat-label">ATS Score</div>
           </div>
-          <div class="rc-stat">
-            <div class="rc-stat-val" style="color:{% if role_match >= 60 %}var(--green){% elif role_match >= 35 %}var(--amber){% else %}var(--red){% endif %}">{{ role_match or '—' }}%</div>
+          <div class="rc-stat" id="roleMatchStatCard">
+            <div class="rc-stat-val" id="roleMatchStatVal" style="color:var(--muted)">—%</div>
             <div class="rc-stat-label">Role Match</div>
           </div>
           <div class="rc-stat">
@@ -425,6 +446,25 @@
       </div>
       {% endif %}
 
+      <!-- ATTEMPTS HISTORY STRIP (shown via JS) -->
+      <div class="attempts-strip" id="attemptsStrip">
+        <div class="attempts-strip-label">Interview Attempts</div>
+        <div class="attempts-list" id="attemptsList"></div>
+      </div>
+
+      <!-- FULL REPORT STRIP (always visible) -->
+      <div class="full-report-strip">
+        <div class="full-report-strip-text">
+          <strong>Ready for your full report?</strong>
+          View detailed analysis, roadmap, and improvement tips in Module 3.
+        </div>
+        <a href="/module3" class="full-report-btn" onclick="storeZeroIfNeeded()">
+          Full Report
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+      <!-- ROLE TAB -->
       <div class="role-tab" id="roleTab">
         <div class="role-tab-icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -434,14 +474,11 @@
         <button class="role-tab-change" onclick="changeRole()">Change</button>
       </div>
 
-      <div class="round-sel-eyebrow" style="margin-top:1.5rem">
-        <span class="round-sel-dot"></span>
-        Mock Interview
-      </div>
+      <div class="round-sel-eyebrow" style="margin-top:1.5rem"><span class="round-sel-dot"></span>Mock Interview</div>
       <h1 class="round-sel-title">Choose your<br><em>interview round</em></h1>
       <p class="round-sel-sub">Select the type of round you want to practice. Each round is tailored to what real interviewers ask.</p>
 
-      <div class="round-cards-grid">
+      <div class="round-cards-grid" id="roundCardsGrid">
         <button class="round-card" onclick="selectRound('screening', this)">
           <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <div class="round-card-tag tag-amber">Entry Point</div>
@@ -514,7 +551,6 @@
   ============================= -->
   <div id="chatScreen" class="chat-screen" style="display:none;">
 
-    <!-- Header -->
     <div class="module2-header">
       <div style="display:flex;align-items:center;gap:0.75rem;">
         <button onclick="backToRounds()" class="back-btn" title="Change round">
@@ -525,26 +561,19 @@
           <div class="module2-subtitle" id="chatSubtitle">Technical Round</div>
         </div>
       </div>
-
-      <!-- role pill + attempt badge -->
       <div style="display:flex;align-items:center;gap:0.6rem;">
         <div class="chat-role-pill" id="chatRolePill">—</div>
-        <div class="attempt-badge" id="attemptBadge" style="display:none;">
-          <span class="attempt-score-dot" id="attemptDot"></span>
-          <span id="attemptBadgeText">—</span>
-        </div>
+        <div class="attempt-header-badge" id="attemptHeaderBadge" style="display:none;"></div>
       </div>
-
       <button class="end-interview-btn" id="endInterviewBtn" style="display:none;" onclick="endInterview()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
         End & Score
       </button>
     </div>
 
-    <!-- Chat area with overlay -->
     <div style="flex:1;position:relative;overflow:hidden;">
 
-      <!-- OVERLAY — start state OR result state -->
+      <!-- OVERLAY -->
       <div class="chat-start-overlay" id="chatStartOverlay">
 
         <!-- START STATE -->
@@ -562,18 +591,18 @@
           </div>
         </div>
 
-        <!-- RESULT STATE (hidden initially) -->
+        <!-- RESULT STATE -->
         <div id="overlayResultState" style="display:none;">
           <div style="display:flex;flex-direction:column;align-items:center;gap:1.1rem;width:100%;max-width:420px;">
 
-            <!-- icon changes to checkmark -->
-            <div class="chat-start-icon" id="resultIcon" style="background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.2);color:var(--green);">
+            <div class="chat-start-icon" id="resultIcon">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
 
+            <!-- completed label -->
+            <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)" id="resultRoundLabel">—</div>
             <div class="chat-start-title">Interview Complete!</div>
 
-            <!-- big score card -->
             <div class="result-score-card">
               <div>
                 <div class="result-score-big" id="resultScoreNum">—</div>
@@ -585,11 +614,13 @@
               </div>
             </div>
 
-            <!-- mini breakdown bars -->
             <div class="result-mini-bars" id="resultMiniBars"></div>
 
-            <!-- action buttons -->
             <div class="result-action-row">
+              <button class="result-action-btn result-action-secondary" onclick="selectNextRound()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                Next Round
+              </button>
               <button class="result-action-btn result-action-secondary" onclick="retakeInterview()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                 Retake
@@ -605,11 +636,9 @@
 
       </div>
 
-      <!-- Chat messages -->
       <div class="chat-container" id="chatBox" style="height:100%;overflow-y:auto;"></div>
     </div>
 
-    <!-- Input (hidden until interview starts) -->
     <div class="input-container input-area-hidden" id="inputArea">
       <input type="text" id="inputBox" placeholder="Type your answer…" autocomplete="off"/>
       <button id="voiceBtn" class="voice-input-btn" onclick="toggleVoice()" title="Voice input">
@@ -620,9 +649,7 @@
             <line x1="12" y1="19" x2="12" y2="22"/>
             <line x1="8" y1="22" x2="16" y2="22"/>
           </svg>
-          <span class="voice-waves">
-            <span></span><span></span><span></span><span></span><span></span>
-          </span>
+          <span class="voice-waves"><span></span><span></span><span></span><span></span><span></span></span>
         </span>
       </button>
       <button id="sendBtn" class="send-btn" onclick="sendMessage()">
@@ -637,7 +664,7 @@
 
 </div>
 
-<!-- SCORING LOADING OVERLAY -->
+<!-- SCORING OVERLAY -->
 <div class="scoring-overlay" id="scoringOverlay" style="display:none;">
   <div class="scoring-spinner"></div>
   <div class="scoring-text">Evaluating your interview…</div>
@@ -649,8 +676,9 @@
   window._candidateName = "{{ candidate_name | default('') }}";
   window._skillsFound   = {{ skills_found | tojson | default('[]') }};
   window._atsScore      = "{{ ats_score | default('') }}";
-  window._roleMatch     = {{ role_match | default(0) }};
+  window._serverRoleMatch = {{ role_match | default(0) }};
   window._resumeText    = "{{ resume_text[:300] | replace('\n',' ') | replace('"', '\\"') | default('') }}";
+  window._serverRole    = "{{ role | default('') }}";
 </script>
 
 {% raw %}
@@ -667,30 +695,60 @@ const ROUND_LABELS = {
   discussion:   'General Discussion'
 };
 
-let selectedRound     = null;
-let currentRole       = '';
-let voiceActive       = false;
-let recognition       = null;
+// Round order for "Next Round" progression
+const ROUND_ORDER = ['screening','technical','coding','project','behavioral','system_design','hr','discussion'];
+
+let selectedRound    = null;
+let currentRole      = '';
+let voiceActive      = false;
+let recognition      = null;
 let voiceSilenceTimer = null;
-let interviewStarted  = false;
-let lastScore         = null;  // stores last interview result
+let interviewStarted = false;
+let lastScoreData    = null;
+
+// Attempts stored in sessionStorage so they persist on page
+// format: [{round, roundLabel, score, grade, attempt}]
+let attemptHistory   = [];
 
 // ── on load ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
   try {
+    // ── If session was just cleared, wipe local state ──
+    // (handles case where reload happened after reset)
     const params  = new URLSearchParams(window.location.search);
+    const cleared = params.get('cleared');
+    if (cleared) {
+      sessionStorage.removeItem('cf-attempt-history');
+      sessionStorage.removeItem('selectedRole');
+      // clean URL
+      window.history.replaceState({}, '', '/module2');
+    }
+
     const urlRole = params.get('role') || '';
     const ssRole  = sessionStorage.getItem('selectedRole') || '';
     currentRole   = urlRole || ssRole;
 
-    if (currentRole) showRoundSelection(currentRole);
-    else document.getElementById('roleGateScreen').style.display = 'flex';
+    // Restore attempt history
+    const saved = sessionStorage.getItem('cf-attempt-history');
+    if (saved) {
+      try { attemptHistory = JSON.parse(saved); } catch(e) { attemptHistory = []; }
+    }
+    // ── Update reset button to reflect module2 state ──
+    if (typeof updateResetBtn === 'function') updateResetBtn();
+
+    if (currentRole) {
+      showRoundSelection(currentRole);
+    } else {
+      document.getElementById('roleGateScreen').style.display = 'flex';
+    }
 
     const mri = document.getElementById('manualRoleInput');
     if (mri) mri.addEventListener('keypress', e => { if (e.key==='Enter') confirmManualRole(); });
 
     const ib = document.getElementById('inputBox');
-    if (ib) ib.addEventListener('keypress', e => { if (e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(); } });
+    if (ib) ib.addEventListener('keypress', e => {
+      if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
 
   } catch(err) {
     console.error('INIT ERROR:', err);
@@ -712,6 +770,12 @@ async function confirmManualRole() {
       body: JSON.stringify({ role })
     });
     const data = await res.json();
+
+    // ── UPDATE ROLE MATCH % on resume card ──
+    if (typeof data.match === 'number') {
+      updateRoleMatchCard(data.match);
+    }
+
     if (data.role_skills?.length) {
       const chipsEl = document.getElementById('roleGateSkillChips');
       if (chipsEl) chipsEl.innerHTML = data.role_skills.map(s=>`<span class="skill-tag">${s}</span>`).join('');
@@ -743,11 +807,108 @@ function changeRole() {
   if (gs) gs.style.display = 'none';
 }
 
+// ── show round selection ─────────────────────────────────────
 function showRoundSelection(role) {
   document.getElementById('roleGateScreen').style.display = 'none';
   document.getElementById('roundSelectionScreen').style.display = 'flex';
+
   const rtv = document.getElementById('roleTabValue');
   if (rtv) rtv.textContent = role || '—';
+
+  // Update role match card
+  // If navigated here via URL role param, use server-rendered value
+  const serverMatch = window._serverRoleMatch || 0;
+  if (serverMatch) updateRoleMatchCard(serverMatch);
+
+  // If role changed from gate, fetch match
+  if (role && role !== window._serverRole && window._hasResume) {
+    fetchAndUpdateRoleMatch(role);
+  }
+
+  // Render attempt history
+  renderAttemptHistory();
+}
+
+// ── fetch role match % and update card ───────────────────────
+async function fetchAndUpdateRoleMatch(role) {
+  try {
+    const res  = await fetch('/module1/analyze-custom-role', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ role })
+    });
+    const data = await res.json();
+    if (typeof data.match === 'number') updateRoleMatchCard(data.match);
+  } catch(e) { console.warn('role match fetch failed:', e); }
+}
+
+function updateRoleMatchCard(pct) {
+  const valEl = document.getElementById('roleMatchStatVal');
+  if (!valEl) return;
+  valEl.textContent = pct + '%';
+  valEl.style.color = pct >= 60 ? 'var(--green)' : pct >= 35 ? 'var(--amber)' : 'var(--red)';
+}
+
+// ── render attempt history strip ─────────────────────────────
+function renderAttemptHistory() {
+  const strip = document.getElementById('attemptsStrip');
+  const list  = document.getElementById('attemptsList');
+  if (!strip || !list) return;
+
+  if (!attemptHistory.length) {
+    strip.style.display = 'none';
+    return;
+  }
+
+  strip.style.display = 'block';
+  list.innerHTML = attemptHistory.map(function(a) {
+    const color = a.score >= 75 ? 'var(--green)' : a.score >= 50 ? 'var(--amber)' : 'var(--red)';
+    const gradeClass = a.score >= 75 ? 'badge-excellent' : a.score >= 50 ? 'badge-good' : 'badge-fair';
+    return `
+      <div class="attempt-item">
+        <div class="attempt-item-left">
+          <div class="attempt-num">Attempt ${a.attempt}</div>
+          <div class="attempt-round-name">${a.roundLabel}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="attempt-grade ${gradeClass}">${a.grade}</span>
+          <div class="attempt-score-badge" style="color:${color}">${a.score}/100</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Also mark completed rounds on the cards
+  markCompletedRounds();
+}
+
+// ── add a tick/score overlay on completed round cards ────────
+function markCompletedRounds() {
+  const completedRounds = new Set(attemptHistory.map(a => a.round));
+  document.querySelectorAll('.round-card').forEach(card => {
+    const onclick = card.getAttribute('onclick') || '';
+    const match   = onclick.match(/selectRound\('([^']+)'/);
+    if (!match) return;
+    const round = match[1];
+    // Remove old badge if exists
+    const old = card.querySelector('.round-done-badge');
+    if (old) old.remove();
+
+    if (completedRounds.has(round)) {
+      const attempt = [...attemptHistory].reverse().find(a => a.round === round);
+      const color   = attempt.score >= 75 ? 'var(--green)' : attempt.score >= 50 ? 'var(--amber)' : 'var(--red)';
+      const badge   = document.createElement('div');
+      badge.className = 'round-done-badge';
+      badge.style.cssText = `
+        position:absolute;top:8px;right:8px;
+        font-family:var(--mono);font-size:0.55rem;
+        letter-spacing:0.08em;padding:0.15rem 0.45rem;
+        background:${color}22;border:1px solid ${color}55;
+        border-radius:4px;color:${color};z-index:2;
+      `;
+      badge.textContent = `✓ ${attempt.score}/100`;
+      card.style.position = 'relative';
+      card.appendChild(badge);
+    }
+  });
 }
 
 // ── round selection ──────────────────────────────────────────
@@ -770,7 +931,6 @@ function startInterview() {
   document.getElementById('roundSelectionScreen').style.display = 'none';
   document.getElementById('chatScreen').style.display = 'flex';
 
-  // Reset to start state
   resetToStartOverlay();
 }
 
@@ -779,7 +939,6 @@ function resetToStartOverlay() {
   const chatBox = document.getElementById('chatBox');
   if (chatBox) chatBox.innerHTML = '';
 
-  // show overlay, hide input + end button
   document.getElementById('chatStartOverlay').style.display = 'flex';
   document.getElementById('overlayStartState').style.display = 'block';
   document.getElementById('overlayResultState').style.display = 'none';
@@ -787,34 +946,28 @@ function resetToStartOverlay() {
   document.getElementById('endInterviewBtn').style.display = 'none';
   interviewStarted = false;
 
-  // set overlay text
   const roundLabel = ROUND_LABELS[selectedRound] || selectedRound;
   const overlayTitle = document.getElementById('overlayTitle');
   const overlaySub   = document.getElementById('overlaySub');
-
   if (overlayTitle) overlayTitle.textContent = `Ready for your ${roundLabel}?`;
 
-  const hasR  = window._hasResume;
-  const name  = window._candidateName ? window._candidateName.split(' ')[0] : '';
+  const hasR = window._hasResume;
+  const name = window._candidateName ? window._candidateName.split(' ')[0] : '';
   if (overlaySub) {
     overlaySub.textContent = (hasR && name)
       ? `Hey ${name}! I've reviewed your resume and will ask personalised questions. Click Start when you're ready.`
-      : `I'll ask you questions one at a time and give feedback after each answer. Click Start when you're ready.`;
+      : `I'll ask questions one at a time and give feedback after each answer. Click Start when you're ready.`;
   }
 
-  // if there was a previous attempt, show badge in header
-  if (lastScore !== null) {
-    updateAttemptBadge(lastScore);
-  }
+  // show last attempt in header badge if exists
+  if (lastScoreData) updateHeaderBadge(lastScoreData.score);
 }
 
-// ── begins the actual chat ───────────────────────────────────
 function beginChat() {
   document.getElementById('chatStartOverlay').style.display = 'none';
   document.getElementById('inputArea').classList.remove('input-area-hidden');
   document.getElementById('endInterviewBtn').style.display = 'flex';
   interviewStarted = true;
-
   botGreet();
   setTimeout(() => { const ib = document.getElementById('inputBox'); if (ib) ib.focus(); }, 200);
 }
@@ -824,42 +977,73 @@ function backToRounds() {
   interviewStarted = false;
   document.getElementById('chatScreen').style.display = 'none';
   document.getElementById('roundSelectionScreen').style.display = 'flex';
+  renderAttemptHistory();
 }
 
-// ── retake — resets chat, stays on same round ────────────────
+// ── next round: go back to round selection ───────────────────
+function selectNextRound() {
+  stopVoice();
+  interviewStarted = false;
+  document.getElementById('chatScreen').style.display = 'none';
+  document.getElementById('roundSelectionScreen').style.display = 'flex';
+
+  // Auto-select next round in sequence
+  const idx  = ROUND_ORDER.indexOf(selectedRound);
+  const next = ROUND_ORDER[idx + 1] || null;
+
+  if (next) {
+    // Find and click the next round card
+    document.querySelectorAll('.round-card').forEach(c => {
+      const onclick = c.getAttribute('onclick') || '';
+      if (onclick.includes(`'${next}'`)) {
+        selectRound(next, c);
+        // scroll into view
+        setTimeout(() => c.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+      }
+    });
+  }
+
+  renderAttemptHistory();
+}
+
+// ── retake same round ────────────────────────────────────────
 function retakeInterview() {
   resetToStartOverlay();
 }
 
+// ── store 0 score if navigating to module3 with no attempts ──
+function storeZeroIfNeeded() {
+  // This is handled server-side, just let the link proceed
+}
+
 // ── greeting ─────────────────────────────────────────────────
 function botGreet() {
-  const hasResume     = window._hasResume     || false;
+  const hasResume     = window._hasResume || false;
   const candidateName = window._candidateName || '';
-  const skillsFound   = window._skillsFound   || [];
-  const atsScore      = window._atsScore      || '';
-  const roleMatch     = window._roleMatch     || 0;
+  const skillsFound   = window._skillsFound || [];
+  const atsScore      = window._atsScore || '';
   const firstName     = candidateName ? candidateName.split(' ')[0] : '';
+  const roundLabel    = ROUND_LABELS[selectedRound] || selectedRound;
 
   if (selectedRound === 'discussion') {
     if (hasResume && firstName) {
       appendBotMessage(
         `Hey ${firstName}! 👋 I've gone through your resume.\n\n` +
-        `Skills in **${skillsFound.slice(0,4).join(', ')}** — solid! ATS **${atsScore}/100**, **${roleMatch}% match** for the role.\n\n` +
-        `Ask me anything — career advice, roadmap, tips. What's on your mind?`
+        `Skills in **${skillsFound.slice(0,4).join(', ')}** — solid! ATS **${atsScore}/100**.\n\n` +
+        `Ask me anything — career advice, roadmap, interview tips. What's on your mind?`
       );
     } else {
-      appendBotMessage(`Hey! 👋 I'm your CareerForge AI assistant.\n\nAsk me **anything** — career advice, skill roadmaps, resume tips, or just talk freely.\n\nWhat's on your mind?`);
+      appendBotMessage(`Hey! 👋 Ask me **anything** — career advice, skill roadmaps, resume tips, or just talk freely.\n\nWhat's on your mind?`);
     }
   } else {
-    const roundLabel = ROUND_LABELS[selectedRound] || selectedRound;
     if (hasResume && firstName) {
       appendBotMessage(
         `Hey ${firstName}! 👋 Ready for your **${roundLabel}**.\n\n` +
         `I'll ask questions based on your background — skills in **${skillsFound.slice(0,3).join(', ')}**.\n\n` +
-        `I'll give feedback after each answer. Type anything to begin! 🚀`
+        `Feedback after each answer. Type anything to begin! 🚀`
       );
     } else {
-      appendBotMessage(`👋 Hi! Welcome to your **${roundLabel}** for **${currentRole}**.\n\nI'll ask questions one at a time and give feedback before moving on.\n\nType anything to begin! 🚀`);
+      appendBotMessage(`👋 Hi! Welcome to your **${roundLabel}** for **${currentRole}**.\n\nI'll ask questions one at a time with feedback.\n\nType anything to begin! 🚀`);
     }
   }
 }
@@ -893,7 +1077,6 @@ async function sendMessage(overrideText) {
   } catch (err) {
     removeTyping(typingEl);
     appendBotMessage('⚠️ Error getting response. Please try again.');
-    console.error('sendMessage error:', err);
   }
 }
 
@@ -912,7 +1095,19 @@ async function endInterview() {
     const data = await res.json();
     document.getElementById('scoringOverlay').style.display = 'none';
 
-    lastScore = data;
+    lastScoreData = data;
+
+    // Save to attempt history
+    const attemptNum = attemptHistory.length + 1;
+    attemptHistory.push({
+      attempt:    attemptNum,
+      round:      selectedRound,
+      roundLabel: ROUND_LABELS[selectedRound] || selectedRound,
+      score:      data.score || 0,
+      grade:      data.grade || 'Average',
+    });
+    sessionStorage.setItem('cf-attempt-history', JSON.stringify(attemptHistory));
+
     showResultOverlay(data);
 
   } catch (err) {
@@ -922,24 +1117,26 @@ async function endInterview() {
   }
 }
 
-// ── show result overlay (replaces start overlay) ─────────────
+// ── show result overlay ──────────────────────────────────────
 function showResultOverlay(data) {
-  const score      = data.score || 0;
-  const grade      = data.grade || 'Average';
-  const summary    = data.summary || '';
-  const breakdown  = data.breakdown || {};
+  const score     = data.score || 0;
+  const grade     = data.grade || 'Average';
+  const summary   = data.summary || '';
+  const breakdown = data.breakdown || {};
 
-  // hide input + end button
   document.getElementById('inputArea').classList.add('input-area-hidden');
   document.getElementById('endInterviewBtn').style.display = 'none';
   interviewStarted = false;
 
-  // switch overlay states
   document.getElementById('overlayStartState').style.display = 'none';
   document.getElementById('overlayResultState').style.display = 'block';
   document.getElementById('chatStartOverlay').style.display = 'flex';
 
-  // score number (animated)
+  // Round completed label
+  const rlEl = document.getElementById('resultRoundLabel');
+  if (rlEl) rlEl.textContent = `${ROUND_LABELS[selectedRound] || selectedRound} · Attempt ${attemptHistory.length}`;
+
+  // Score (animated)
   const scoreNumEl = document.getElementById('resultScoreNum');
   if (scoreNumEl) {
     const color = score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--amber)' : 'var(--red)';
@@ -953,38 +1150,26 @@ function showResultOverlay(data) {
     }, 18);
   }
 
-  // result icon color based on score
+  // Result icon color
   const iconEl = document.getElementById('resultIcon');
   if (iconEl) {
-    if (score >= 75) {
-      iconEl.style.background = 'rgba(74,222,128,0.1)';
-      iconEl.style.borderColor = 'rgba(74,222,128,0.2)';
-      iconEl.style.color = 'var(--green)';
-    } else if (score >= 50) {
-      iconEl.style.background = 'rgba(251,191,36,0.1)';
-      iconEl.style.borderColor = 'rgba(251,191,36,0.2)';
-      iconEl.style.color = 'var(--amber)';
-    } else {
-      iconEl.style.background = 'rgba(248,113,113,0.1)';
-      iconEl.style.borderColor = 'rgba(248,113,113,0.2)';
-      iconEl.style.color = 'var(--red)';
-    }
+    if (score >= 75)      { iconEl.style.cssText += ';background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.2);color:var(--green)'; }
+    else if (score >= 50) { iconEl.style.cssText += ';background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.2);color:var(--amber)'; }
+    else                  { iconEl.style.cssText += ';background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.2);color:var(--red)'; }
   }
 
-  // grade pill
+  // Grade
   const gradeEl = document.getElementById('resultGradePill');
   if (gradeEl) {
     gradeEl.textContent = grade;
-    gradeEl.className = 'result-grade-pill ' + (
-      score >= 75 ? 'badge-excellent' : score >= 50 ? 'badge-good' : 'badge-fair'
-    );
+    gradeEl.className = 'result-grade-pill ' + (score >= 75 ? 'badge-excellent' : score >= 50 ? 'badge-good' : 'badge-fair');
   }
 
-  // summary
+  // Summary
   const sumEl = document.getElementById('resultSummaryText');
   if (sumEl) sumEl.textContent = summary;
 
-  // mini breakdown bars
+  // Mini breakdown bars
   const barsEl = document.getElementById('resultMiniBars');
   const bdNames = {
     technical_knowledge: 'Technical',
@@ -993,7 +1178,6 @@ function showResultOverlay(data) {
     depth_of_answers:    'Depth',
     confidence:          'Confidence',
   };
-
   if (barsEl) {
     barsEl.innerHTML = Object.entries(bdNames).map(([key, label]) => {
       const item  = breakdown[key] || {};
@@ -1001,46 +1185,35 @@ function showResultOverlay(data) {
       const m     = item.max   || 20;
       const pct   = Math.round((s / m) * 100);
       const color = pct >= 70 ? 'var(--green)' : pct >= 45 ? 'var(--amber)' : 'var(--red)';
-      const bid   = 'rmb-' + key;
       return `
         <div class="result-mini-bar-item">
           <div class="result-mini-label">${label}</div>
           <div class="result-mini-track">
-            <div class="result-mini-fill" id="${bid}" style="width:0%;background:${color}"></div>
+            <div class="result-mini-fill" id="rmb-${key}" style="width:0%;background:${color}"></div>
           </div>
           <div class="result-mini-val" style="color:${color}">${s}/${m}</div>
         </div>`;
     }).join('');
-
     requestAnimationFrame(() => {
       setTimeout(() => {
         Object.keys(bdNames).forEach(key => {
           const item = breakdown[key] || {};
-          const s = item.score || 0;
-          const m = item.max || 20;
           const el = document.getElementById('rmb-' + key);
-          if (el) el.style.width = Math.round((s / m) * 100) + '%';
+          if (el) el.style.width = Math.round(((item.score||0)/(item.max||20))*100) + '%';
         });
       }, 120);
     });
   }
 
-  // update header attempt badge
-  updateAttemptBadge(data);
+  // Update header badge
+  updateHeaderBadge(score);
 }
 
-// ── attempt badge in header ───────────────────────────────────
-function updateAttemptBadge(data) {
-  const score = data.score || 0;
-  const badge = document.getElementById('attemptBadge');
-  const dot   = document.getElementById('attemptDot');
-  const text  = document.getElementById('attemptBadgeText');
-
+function updateHeaderBadge(score) {
+  const badge = document.getElementById('attemptHeaderBadge');
   if (!badge) return;
-
   const color = score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--amber)' : 'var(--red)';
-  if (dot)  { dot.style.background = color; dot.style.width = '6px'; dot.style.height = '6px'; dot.style.borderRadius = '50%'; }
-  if (text) text.textContent = `Last: ${score}/100`;
+  badge.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:${color};display:inline-block;"></span> Last: ${score}/100`;
   badge.style.display = 'flex';
   badge.style.borderColor = color;
   badge.style.color = color;
@@ -1056,19 +1229,15 @@ function appendUserMessage(text) {
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 function appendBotMessage(text) {
   const chatBox = document.getElementById('chatBox');
   if (!chatBox) return;
   const div = document.createElement('div');
   div.className = 'msg bot';
-  div.innerHTML = text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
+  div.innerHTML = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 function appendTyping() {
   const chatBox = document.getElementById('chatBox');
   if (!chatBox) return null;
@@ -1079,31 +1248,23 @@ function appendTyping() {
   chatBox.scrollTop = chatBox.scrollHeight;
   return div;
 }
-
-function removeTyping(el) {
-  if (el && el.parentNode) el.parentNode.removeChild(el);
-}
+function removeTyping(el) { if (el && el.parentNode) el.parentNode.removeChild(el); }
 
 // ── voice ────────────────────────────────────────────────────
 function toggleVoice() { voiceActive ? stopVoice() : startVoice(); }
-
 function startVoice() {
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
     alert('Voice input not supported. Please use Chrome.'); return;
   }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
-  recognition.lang = 'en-US';
-  recognition.interimResults = true;
-  recognition.continuous = true;
-  voiceActive = true;
-  setVoiceUI(true);
-
+  recognition.lang = 'en-US'; recognition.interimResults = true; recognition.continuous = true;
+  voiceActive = true; setVoiceUI(true);
   recognition.onresult = function(event) {
     let interim = '', final = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) final   += event.results[i][0].transcript;
-      else                          interim += event.results[i][0].transcript;
+      if (event.results[i].isFinal) final += event.results[i][0].transcript;
+      else interim += event.results[i][0].transcript;
     }
     const ib = document.getElementById('inputBox');
     if (ib) ib.value = final || interim;
@@ -1118,25 +1279,20 @@ function startVoice() {
       }, 1800);
     }
   };
-
   recognition.onerror = e => { console.warn('Voice error:', e.error); stopVoice(); };
   recognition.onend   = () => { if (voiceActive) recognition.start(); };
   recognition.start();
 }
-
 function stopVoice() {
-  voiceActive = false;
-  clearTimeout(voiceSilenceTimer);
+  voiceActive = false; clearTimeout(voiceSilenceTimer);
   if (recognition) { recognition.onend = null; recognition.stop(); recognition = null; }
   setVoiceUI(false);
   if (window.speechSynthesis) window.speechSynthesis.cancel();
 }
-
 function setVoiceUI(active) {
   const btn = document.getElementById('voiceBtn');
   if (btn) btn.classList.toggle('voice-active', active);
 }
-
 function speakText(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();

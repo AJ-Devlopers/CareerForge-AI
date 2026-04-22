@@ -356,6 +356,29 @@ Evaluate the candidate's performance and return ONLY valid JSON (no markdown, no
     return JSONResponse(result)
 
 
+# ── ENSURE SCORE EXISTS (called before module3 if no attempts) ──
+@router.post("/module2/ensure-score")
+async def ensure_score(request: Request):
+    """
+    If user navigates to module3 without completing any interview,
+    store a 0-score placeholder so module3 always has something to work with.
+    """
+    existing = request.session.get("interview_results", [])
+    if not existing:
+        request.session["interview_results"] = [{
+            "role":      request.session.get("selected_role", "General"),
+            "round":     "none",
+            "score":     0,
+            "grade":     "Not Attempted",
+            "summary":   "No interview was completed.",
+            "breakdown": {},
+            "strengths":    [],
+            "improvements": [],
+        }]
+        request.session["last_interview_score"] = 0
+    return JSONResponse({"status": "ok", "score": request.session.get("last_interview_score", 0)})
+
+
 # ── RESET ────────────────────────────────────────────────────
 @router.post("/module2/reset")
 async def reset_session(request: Request):

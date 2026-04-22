@@ -173,58 +173,44 @@ document.addEventListener('DOMContentLoaded', function () {
 function updateResetBtn() {
   const sidebarBtn = document.getElementById('resetSessionBtn');
   const topBtn     = document.getElementById('topResetBtn');
-  const hasData    = !!sessionStorage.getItem('cf-resume-result');
+
+  const hasData = !!(
+    sessionStorage.getItem('cf-resume-result') ||
+    sessionStorage.getItem('cf-attempt-history') ||
+    sessionStorage.getItem('selectedRole')
+  );
 
   if (sidebarBtn) {
     sidebarBtn.classList.toggle('reset-btn--active', hasData);
-    sidebarBtn.title = hasData
-      ? 'Clear resume session and start fresh'
-      : 'No active session';
+    sidebarBtn.title = hasData ? 'Reset everything' : 'No active session';
   }
-
   if (topBtn) {
     topBtn.classList.toggle('active', hasData);
     topBtn.style.display = 'flex';
-    topBtn.title = hasData
-      ? 'Clear resume session and start fresh'
-      : 'No active session';
+    topBtn.title = hasData ? 'Reset everything' : 'No active session';
   }
 }
-
-
 // ============================================================
 // RESET SESSION — clears frontend + backend
 // ============================================================
 async function resetSession() {
-  const hasData = !!sessionStorage.getItem('cf-resume-result');
-  if (!hasData) return;
+  if (!confirm('Reset everything and start fresh?')) return;
 
-  if (!confirm('Clear your current resume session and start fresh?')) return;
+  // ── Clear ALL frontend storage ──
+  sessionStorage.clear();  // wipes everything in one shot
 
-  sessionStorage.removeItem('cf-resume-result');
-  sessionStorage.removeItem('selectedRole');
-
+  // ── Clear ALL backend session ──
   try {
-    await fetch('/module1/clear-session', { method: 'POST' });
+    await fetch('/session/clear-all', { method: 'POST' });
   } catch(e) {
     console.warn('Could not clear server session:', e);
   }
 
-  const resultsEl  = document.getElementById('results');
-  const emptyEl    = document.getElementById('emptyState');
-  const fileInfo   = document.getElementById('fileInfo');
-  const analyzeBtn = document.getElementById('analyzeBtn');
-  const uploadZone = document.getElementById('uploadZone');
-
-  if (resultsEl)  resultsEl.classList.remove('show');
-  if (emptyEl)    emptyEl.style.display = 'flex';
-  if (fileInfo)   fileInfo.classList.remove('show');
-  if (analyzeBtn) analyzeBtn.disabled = true;
-  if (uploadZone) uploadZone.style.borderColor = '';
-
   updateResetBtn();
-}
 
+  // ── Redirect to home ──
+  window.location.href = '/';
+}
 
 // ============================================================
 // HELPERS
