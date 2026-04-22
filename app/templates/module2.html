@@ -23,6 +23,502 @@
 
 {% block content %}
 
+<style>
+/* ── RESUME CARD (shown at top of round selection) ── */
+.resume-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.resume-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(232,213,163,0.05), transparent 60%);
+  pointer-events: none;
+}
+
+.resume-card-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(232,213,163,0.12);
+  border: 1px solid rgba(232,213,163,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.resume-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.resume-card-name {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.2rem;
+  color: var(--text);
+}
+
+.resume-card-sub {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.resume-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.rc-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-width: 64px;
+}
+
+.rc-stat-val {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 1.3rem;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+
+.rc-stat-label {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.resume-card-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.75rem;
+}
+
+.rc-skill {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+}
+
+/* ── START INTERVIEW OVERLAY (inside chat) ── */
+.chat-start-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background: var(--bg);
+  z-index: 10;
+  padding: 2rem;
+  text-align: center;
+}
+
+.chat-start-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(232,213,163,0.1);
+  border: 1px solid rgba(232,213,163,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.chat-start-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.chat-start-sub {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  max-width: 340px;
+  line-height: 1.6;
+}
+
+.chat-start-btn {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  padding: 0.9rem 2.5rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 500;
+}
+
+.chat-start-btn:hover {
+  background: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(232,213,163,0.25);
+}
+
+.chat-start-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── END INTERVIEW BUTTON ── */
+.end-interview-btn {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid rgba(248,113,113,0.3);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--red);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.end-interview-btn:hover {
+  background: rgba(248,113,113,0.08);
+  border-color: var(--red);
+}
+
+.end-interview-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── SCORE MODAL ── */
+.score-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.score-modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 520px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.score-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.score-modal-title {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.score-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.score-modal-close:hover { color: var(--text); border-color: var(--text); }
+
+.score-big-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.score-big-num {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 4rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.score-big-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.score-grade-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 100px;
+  letter-spacing: 0.08em;
+}
+
+.score-summary {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.score-breakdown-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.score-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.score-bd-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.score-bd-name {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  width: 140px;
+  flex-shrink: 0;
+  text-transform: capitalize;
+}
+
+.score-bd-bar-wrap {
+  flex: 1;
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.score-bd-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.score-bd-val {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text);
+  width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.score-list-section {
+  margin-bottom: 1.25rem;
+}
+
+.score-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.score-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.score-list-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.score-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.score-action-btn {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  padding: 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.score-action-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  font-weight: 500;
+}
+
+.score-action-primary:hover {
+  background: var(--white);
+  transform: translateY(-1px);
+}
+
+.score-action-secondary {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border2);
+}
+
+.score-action-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── SCORING LOADING STATE ── */
+.scoring-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.scoring-spinner {
+  width: 52px;
+  height: 52px;
+  border: 3px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.scoring-text {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* ── CHAT SCREEN position fix for overlay ── */
+.chat-screen {
+  position: relative;
+}
+
+.chat-container {
+  position: relative;
+}
+
+/* ── INPUT HIDDEN UNTIL STARTED ── */
+.input-area-hidden {
+  display: none !important;
+}
+</style>
+
 <div class="module2-container">
 
   <!-- ============================
@@ -45,13 +541,8 @@
       </p>
 
       <div class="role-gate-input-row">
-        <input
-          type="text"
-          id="manualRoleInput"
-          class="custom-role-input"
-          placeholder="e.g. Frontend Engineer, Data Analyst…"
-          autocomplete="off"
-        />
+        <input type="text" id="manualRoleInput" class="custom-role-input"
+          placeholder="e.g. Frontend Engineer, Data Analyst…" autocomplete="off"/>
         <button class="custom-role-btn" onclick="confirmManualRole()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
           Continue
@@ -66,7 +557,6 @@
       <p class="role-gate-hint">
         No role? Use <button class="role-gate-discussion-btn" onclick="useGeneralDiscussion()">General Discussion ↗</button>
       </p>
-
     </div>
   </div>
 
@@ -77,9 +567,50 @@
   <div id="roundSelectionScreen" class="round-selection-screen" style="display:none;">
     <div class="round-selection-inner">
 
+      <!-- ── RESUME CARD (only shown if resume uploaded) ── -->
+      {% if has_resume %}
+      <div class="resume-card" id="resumeInfoCard">
+        <div class="resume-card-avatar" id="avatarInitial">
+          {{ candidate_name[0].upper() if candidate_name else '?' }}
+        </div>
+        <div class="resume-card-info">
+          <div class="resume-card-name">{{ candidate_name or "Candidate" }}</div>
+          <div class="resume-card-sub">Resume loaded · Ready to interview</div>
+          <div class="resume-card-skills" id="resumeSkillChips">
+            {% for skill in skills_found[:10] %}
+            <span class="rc-skill">{{ skill }}</span>
+            {% endfor %}
+            {% if skills_found|length > 10 %}
+            <span class="rc-skill">+{{ skills_found|length - 10 }} more</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="resume-card-stats">
+          <div class="rc-stat">
+            <div class="rc-stat-val" style="color:{% if ats_score >= 75 %}var(--green){% elif ats_score >= 50 %}var(--amber){% else %}var(--red){% endif %}">
+              {{ ats_score or '—' }}
+            </div>
+            <div class="rc-stat-label">ATS Score</div>
+          </div>
+          <div class="rc-stat">
+            <div class="rc-stat-val" style="color:{% if role_match >= 60 %}var(--green){% elif role_match >= 35 %}var(--amber){% else %}var(--red){% endif %}" id="roleMatchPct">
+              {{ role_match or '—' }}%
+            </div>
+            <div class="rc-stat-label">Role Match</div>
+          </div>
+          <div class="rc-stat">
+            <div class="rc-stat-val" style="color:var(--accent)">{{ skills_found|length }}</div>
+            <div class="rc-stat-label">Skills</div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
       <div class="role-tab" id="roleTab">
         <div class="role-tab-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
         </div>
         <span class="role-tab-label">Interviewing for:</span>
         <span class="role-tab-value" id="roleTabValue">—</span>
@@ -101,87 +632,69 @@
       </p>
 
       <div class="round-cards-grid">
-
         <button class="round-card" onclick="selectRound('screening', this)">
-          <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </div>
+          <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <div class="round-card-tag tag-amber">Entry Point</div>
           <div class="round-card-title">Initial Screening</div>
-          <div class="round-card-desc">Quick 15-min intro call. Background, motivation, communication skills, and culture fit basics.</div>
+          <div class="round-card-desc">Quick intro call — background, motivation, communication, culture fit.</div>
           <div class="round-card-pills"><span>Background</span><span>Motivation</span><span>Communication</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('technical', this)">
-          <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          </div>
+          <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
           <div class="round-card-tag tag-green">Core Round</div>
           <div class="round-card-title">Technical Round</div>
-          <div class="round-card-desc">Deep-dive into your tech stack, architecture decisions, tools, and domain knowledge.</div>
+          <div class="round-card-desc">Deep-dive into your tech stack, architecture decisions, tools.</div>
           <div class="round-card-pills"><span>Tech Stack</span><span>Architecture</span><span>Tools</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('coding', this)">
-          <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
+          <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
           <div class="round-card-tag tag-red">Problem Solving</div>
           <div class="round-card-title">Coding / DSA Round</div>
-          <div class="round-card-desc">Algorithm, data structures, and coding problems relevant to your domain and role level.</div>
+          <div class="round-card-desc">Algorithms, data structures, and coding problems.</div>
           <div class="round-card-pills"><span>Algorithms</span><span>DSA</span><span>Optimization</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('project', this)">
-          <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-          </div>
+          <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
           <div class="round-card-tag tag-green">Resume Deep-Dive</div>
           <div class="round-card-title">Project Round</div>
-          <div class="round-card-desc">Detailed questions about your projects — decisions made, trade-offs, challenges, outcomes.</div>
+          <div class="round-card-desc">Questions about your projects, decisions, trade-offs, outcomes.</div>
           <div class="round-card-pills"><span>Projects</span><span>Trade-offs</span><span>Outcomes</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('behavioral', this)">
-          <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
+          <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <div class="round-card-tag tag-amber">Soft Skills</div>
           <div class="round-card-title">Behavioural Round</div>
-          <div class="round-card-desc">STAR-format situational questions about leadership, conflict, failure, teamwork.</div>
+          <div class="round-card-desc">STAR-format — leadership, conflict, failure, teamwork.</div>
           <div class="round-card-pills"><span>STAR Method</span><span>Leadership</span><span>Teamwork</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('system_design', this)">
-          <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg>
-          </div>
+          <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg></div>
           <div class="round-card-tag tag-red">Senior Level</div>
           <div class="round-card-title">System Design</div>
-          <div class="round-card-desc">Design scalable systems — databases, APIs, caching, microservices, load balancing.</div>
+          <div class="round-card-desc">Design scalable systems — databases, APIs, microservices.</div>
           <div class="round-card-pills"><span>Scalability</span><span>Architecture</span><span>APIs</span></div>
         </button>
 
         <button class="round-card" onclick="selectRound('hr', this)">
-          <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
+          <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
           <div class="round-card-tag tag-green">Culture Fit</div>
           <div class="round-card-title">HR Round</div>
-          <div class="round-card-desc">Salary expectations, work style, career goals, strengths, weaknesses, notice period.</div>
+          <div class="round-card-desc">Salary, work style, career goals, strengths, weaknesses.</div>
           <div class="round-card-pills"><span>Salary</span><span>Career Goals</span><span>Culture Fit</span></div>
         </button>
 
         <button class="round-card round-card--discussion" onclick="selectRound('discussion', this)">
-          <div class="round-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
+          <div class="round-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
           <div class="round-card-tag tag-amber">Open Session</div>
           <div class="round-card-title">General Discussion</div>
-          <div class="round-card-desc">Casual conversation — get career advice, skill suggestions, roadmap guidance or talk freely.</div>
+          <div class="round-card-desc">Career advice, roadmaps, suggestions, free-form chat.</div>
           <div class="round-card-pills"><span>Career Advice</span><span>Roadmap</span><span>Suggestions</span></div>
         </button>
-
       </div>
 
       <button class="round-start-btn" id="startInterviewBtn" disabled onclick="startInterview()">
@@ -198,6 +711,7 @@
   ============================= -->
   <div id="chatScreen" class="chat-screen" style="display:none;">
 
+    <!-- Header -->
     <div class="module2-header">
       <div style="display:flex;align-items:center;gap:0.75rem;">
         <button onclick="backToRounds()" class="back-btn" title="Change round">
@@ -208,19 +722,43 @@
           <div class="module2-subtitle" id="chatSubtitle">Technical Round</div>
         </div>
       </div>
+
       <div class="chat-role-pill" id="chatRolePill">—</div>
-      <div class="module2-controls"></div>
+
+      <!-- End Interview button (shown only after interview starts) -->
+      <button class="end-interview-btn" id="endInterviewBtn" style="display:none;" onclick="endInterview()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+        End & Score
+      </button>
     </div>
 
-    <div class="chat-container" id="chatBox"></div>
+    <!-- Chat box (relative for overlay) -->
+    <div style="flex:1;position:relative;overflow:hidden;">
 
-    <div class="input-container">
-      <input
-        type="text"
-        id="inputBox"
-        placeholder="Type your answer…"
-        autocomplete="off"
-      />
+      <!-- START OVERLAY — shown before interview begins -->
+      <div class="chat-start-overlay" id="chatStartOverlay">
+        <div class="chat-start-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+        </div>
+        <div class="chat-start-title" id="overlayTitle">Ready to begin?</div>
+        <div class="chat-start-sub" id="overlaySub">
+          Click Start to begin your interview. I'll ask questions one at a time and give you feedback after each answer.
+        </div>
+        <button class="chat-start-btn" onclick="beginChat()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Start Interview
+        </button>
+      </div>
+
+      <!-- Actual chat messages -->
+      <div class="chat-container" id="chatBox" style="height:100%;overflow-y:auto;"></div>
+    </div>
+
+    <!-- Input (hidden until interview starts) -->
+    <div class="input-container input-area-hidden" id="inputArea">
+      <input type="text" id="inputBox" placeholder="Type your answer…" autocomplete="off"/>
       <button id="voiceBtn" class="voice-input-btn" onclick="toggleVoice()" title="Voice input">
         <span class="voice-btn-inner">
           <svg class="voice-icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -245,13 +783,73 @@
   </div>
 
 </div>
+
+<!-- ── SCORING LOADING OVERLAY ── -->
+<div class="scoring-overlay" id="scoringOverlay" style="display:none;">
+  <div class="scoring-spinner"></div>
+  <div class="scoring-text">Evaluating your interview…</div>
+</div>
+
+<!-- ── SCORE MODAL ── -->
+<div class="score-modal-backdrop" id="scoreModalBackdrop" style="display:none;" onclick="closeScoreModal(event)">
+  <div class="score-modal" id="scoreModal">
+    <div class="score-modal-header">
+      <div class="score-modal-title">Interview Results</div>
+      <button class="score-modal-close" onclick="closeScoreModalDirect()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Score + Grade -->
+    <div class="score-big-row">
+      <div>
+        <div class="score-big-num" id="modalScoreNum">—</div>
+        <div style="color:var(--muted);font-family:var(--mono);font-size:0.65rem;margin-top:0.2rem">/ 100</div>
+      </div>
+      <div>
+        <div class="score-big-label">Overall Performance</div>
+        <span class="score-grade-badge" id="modalGrade">—</span>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem;line-height:1.6" id="modalSummary"></div>
+      </div>
+    </div>
+
+    <!-- Breakdown bars -->
+    <div class="score-breakdown-label">Score Breakdown</div>
+    <div class="score-breakdown-list" id="modalBreakdown"></div>
+
+    <!-- Strengths -->
+    <div class="score-list-section">
+      <div class="score-breakdown-label">Strengths</div>
+      <div class="score-list-items" id="modalStrengths"></div>
+    </div>
+
+    <!-- Improvements -->
+    <div class="score-list-section">
+      <div class="score-breakdown-label">Areas to Improve</div>
+      <div class="score-list-items" id="modalImprovements"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="score-modal-actions">
+      <button class="score-action-btn score-action-secondary" onclick="closeScoreModalDirect()">
+        Continue Chatting
+      </button>
+      <a href="/module3" class="score-action-btn score-action-primary">
+        View Full Report
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- Jinja2 data for JS -->
 <script>
-    window._hasResume     = {{ 'true' if has_resume else 'false' }};
-    window._candidateName = "{{ candidate_name | default('') }}";
-    window._skillsFound   = {{ skills_found | tojson | default('[]') }};
-    window._atsScore      = "{{ ats_score | default('') }}";
-    window._resumeText    = "{{ resume_text[:300] | replace('\n',' ') | replace('"', '\\"') | default('') }}";
+  window._hasResume     = {{ 'true' if has_resume else 'false' }};
+  window._candidateName = "{{ candidate_name | default('') }}";
+  window._skillsFound   = {{ skills_found | tojson | default('[]') }};
+  window._atsScore      = "{{ ats_score | default('') }}";
+  window._roleMatch     = {{ role_match | default(0) }};
+  window._resumeText    = "{{ resume_text[:300] | replace('\n',' ') | replace('"', '\\"') | default('') }}";
 </script>
 
 {% raw %}
@@ -273,6 +871,7 @@ let currentRole       = '';
 let voiceActive       = false;
 let recognition       = null;
 let voiceSilenceTimer = null;
+let interviewStarted  = false;
 
 // ── on load ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
@@ -289,26 +888,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const mri = document.getElementById('manualRoleInput');
-    if (mri) {
-      mri.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') confirmManualRole();
-      });
-    }
+    if (mri) mri.addEventListener('keypress', function(e){ if(e.key==='Enter') confirmManualRole(); });
 
     const ib = document.getElementById('inputBox');
-    if (ib) {
-      ib.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-      });
-    }
+    if (ib) ib.addEventListener('keypress', function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(); } });
 
   } catch(err) {
     console.error('INIT ERROR:', err);
-    // fallback — just show role gate
     const rg = document.getElementById('roleGateScreen');
     if (rg) rg.style.display = 'flex';
   }
 });
+
 // ── role gate ────────────────────────────────────────────────
 async function confirmManualRole() {
   const input = document.getElementById('manualRoleInput');
@@ -319,33 +910,26 @@ async function confirmManualRole() {
 
   try {
     const res  = await fetch('/module1/analyze-custom-role', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ role })
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ role })
     });
     const data = await res.json();
     if (data.role_skills && data.role_skills.length) {
       const chipsEl = document.getElementById('roleGateSkillChips');
-      if (chipsEl) {
-        chipsEl.innerHTML = data.role_skills
-          .map(s => `<span class="skill-tag">${s}</span>`)
-          .join('');
-      }
+      if (chipsEl) chipsEl.innerHTML = data.role_skills.map(s=>`<span class="skill-tag">${s}</span>`).join('');
       const skillsEl = document.getElementById('roleGateSkills');
       if (skillsEl) skillsEl.style.display = 'block';
     }
-  } catch(e) {
-    console.warn('role skills fetch failed:', e);
-  }
+  } catch(e) { console.warn('role skills fetch failed:', e); }
 
-  setTimeout(function () { showRoundSelection(role); }, 900);
+  setTimeout(function(){ showRoundSelection(role); }, 900);
 }
 
 function useGeneralDiscussion() {
   currentRole = 'General';
   showRoundSelection('General');
-  setTimeout(function () {
-    document.querySelectorAll('.round-card').forEach(function (c) {
+  setTimeout(function(){
+    document.querySelectorAll('.round-card').forEach(function(c){
       const t = c.querySelector('.round-card-title');
       if (t && t.textContent.includes('General')) selectRound('discussion', c);
     });
@@ -354,7 +938,7 @@ function useGeneralDiscussion() {
 
 function changeRole() {
   document.getElementById('roundSelectionScreen').style.display = 'none';
-  document.getElementById('roleGateScreen').style.display       = 'flex';
+  document.getElementById('roleGateScreen').style.display = 'flex';
   const mri = document.getElementById('manualRoleInput');
   if (mri) mri.value = '';
   const gs = document.getElementById('roleGateSkills');
@@ -362,7 +946,7 @@ function changeRole() {
 }
 
 function showRoundSelection(role) {
-  document.getElementById('roleGateScreen').style.display       = 'none';
+  document.getElementById('roleGateScreen').style.display = 'none';
   document.getElementById('roundSelectionScreen').style.display = 'flex';
   const rtv = document.getElementById('roleTabValue');
   if (rtv) rtv.textContent = role || '—';
@@ -386,14 +970,43 @@ function startInterview() {
   if (pill) pill.textContent = currentRole;
 
   document.getElementById('roundSelectionScreen').style.display = 'none';
-  document.getElementById('chatScreen').style.display           = 'flex';
+  document.getElementById('chatScreen').style.display = 'flex';
 
   const chatBox = document.getElementById('chatBox');
   if (chatBox) chatBox.innerHTML = '';
 
+  // Show overlay, hide input
+  document.getElementById('chatStartOverlay').style.display = 'flex';
+  document.getElementById('inputArea').classList.add('input-area-hidden');
+  document.getElementById('endInterviewBtn').style.display = 'none';
+  interviewStarted = false;
+
+  // Set overlay text
+  const roundLabel = ROUND_LABELS[selectedRound] || selectedRound;
+  const overlayTitle = document.getElementById('overlayTitle');
+  const overlaySub   = document.getElementById('overlaySub');
+  if (overlayTitle) overlayTitle.textContent = `Ready for your ${roundLabel}?`;
+  if (overlaySub) {
+    const hasR = window._hasResume;
+    const name = window._candidateName ? window._candidateName.split(' ')[0] : '';
+    if (hasR && name) {
+      overlaySub.textContent = `Hey ${name}! I've reviewed your resume and will ask personalised questions. Click Start when you're ready.`;
+    } else {
+      overlaySub.textContent = `I'll ask you questions one at a time and give feedback after each answer. Click Start when you're ready.`;
+    }
+  }
+}
+
+// ── begins the actual chat ───────────────────────────────────
+function beginChat() {
+  document.getElementById('chatStartOverlay').style.display = 'none';
+  document.getElementById('inputArea').classList.remove('input-area-hidden');
+  document.getElementById('endInterviewBtn').style.display = 'flex';
+  interviewStarted = true;
+
   botGreet();
 
-  setTimeout(function () {
+  setTimeout(function(){
     const ib = document.getElementById('inputBox');
     if (ib) ib.focus();
   }, 200);
@@ -401,7 +1014,8 @@ function startInterview() {
 
 function backToRounds() {
   stopVoice();
-  document.getElementById('chatScreen').style.display           = 'none';
+  interviewStarted = false;
+  document.getElementById('chatScreen').style.display = 'none';
   document.getElementById('roundSelectionScreen').style.display = 'flex';
 }
 
@@ -411,6 +1025,7 @@ function botGreet() {
   const candidateName = window._candidateName || '';
   const skillsFound   = window._skillsFound   || [];
   const atsScore      = window._atsScore      || '';
+  const roleMatch     = window._roleMatch     || 0;
   const firstName     = candidateName ? candidateName.split(' ')[0] : '';
 
   if (selectedRound === 'discussion') {
@@ -418,42 +1033,31 @@ function botGreet() {
       appendBotMessage(
         `Hey ${firstName}! 👋 I've gone through your resume.\n\n` +
         `I can see you've got skills in **${skillsFound.slice(0,4).join(', ')}** — solid foundation!\n\n` +
-        `Your ATS score is **${atsScore}/100**. Ask me anything — career advice, roadmap, interview tips, or anything else. What's on your mind?`
+        `Your ATS score is **${atsScore}/100** and you're a **${roleMatch}% match** for the role.\n\n` +
+        `Ask me anything — career advice, roadmap, interview tips. What's on your mind?`
       );
     } else {
-      appendBotMessage(
-        `Hey! 👋 I'm your CareerForge AI assistant.\n\n` +
-        `Ask me **anything** — career advice, skill roadmaps, resume tips, salary negotiation, interview prep, or just talk freely.\n\n` +
-        `What's on your mind?`
-      );
+      appendBotMessage(`Hey! 👋 I'm your CareerForge AI assistant.\n\nAsk me **anything** — career advice, skill roadmaps, resume tips, salary negotiation, or just talk freely.\n\nWhat's on your mind?`);
     }
   } else {
     const roundLabel = ROUND_LABELS[selectedRound] || selectedRound;
     if (hasResume && firstName) {
       appendBotMessage(
         `Hey ${firstName}! 👋 I've reviewed your resume for this **${roundLabel}**.\n\n` +
-        `I'll ask questions tailored to your background — your projects, your skills in **${skillsFound.slice(0,3).join(', ')}**, and what matters for the **${currentRole}** role.\n\n` +
-        `I'll give you quick feedback after each answer, then move to the next question.\n\n` +
-        `Ready? Just say **"start"** or type anything! 🚀`
+        `I'll ask questions tailored to your background — your skills in **${skillsFound.slice(0,3).join(', ')}**.\n\n` +
+        `I'll give feedback after each answer, then move to the next question.\n\n` +
+        `Ready? Say anything to begin! 🚀`
       );
     } else {
-      appendBotMessage(
-        `👋 Hi! Welcome to your **${roundLabel}** for the **${currentRole}** role.\n\n` +
-        `I'll ask you questions one at a time and give you feedback before moving on.\n\n` +
-        `Whenever you're ready — just say **"start"** or type anything to begin! 🚀`
-      );
+      appendBotMessage(`👋 Hi! Welcome to your **${roundLabel}** for **${currentRole}**.\n\nI'll ask questions one at a time and give feedback before moving on.\n\nType anything to begin! 🚀`);
     }
   }
 }
 
-
 // ── send message ─────────────────────────────────────────────
 async function sendMessage(overrideText) {
   const inputBox = document.getElementById('inputBox');
-  const message  = (overrideText !== undefined
-    ? overrideText
-    : (inputBox ? inputBox.value : '')
-  ).trim();
+  const message  = (overrideText !== undefined ? overrideText : (inputBox ? inputBox.value : '')).trim();
   if (!message) return;
 
   appendUserMessage(message);
@@ -461,15 +1065,13 @@ async function sendMessage(overrideText) {
 
   const typingEl = appendTyping();
 
-  const endpoint = (selectedRound === 'discussion')
-    ? '/module2/discuss'
-    : '/module2/next-question';
+  const endpoint = (selectedRound === 'discussion') ? '/module2/discuss' : '/module2/next-question';
 
   try {
     const res = await fetch(endpoint, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
         role:           currentRole,
         round:          selectedRound,
         answer:         message,
@@ -489,12 +1091,146 @@ async function sendMessage(overrideText) {
     console.error('sendMessage error:', err);
   }
 }
+
+// ── END INTERVIEW ────────────────────────────────────────────
+async function endInterview() {
+  if (!confirm('End the interview and get your score?')) return;
+
+  document.getElementById('scoringOverlay').style.display = 'flex';
+  stopVoice();
+
+  try {
+    const res = await fetch('/module2/end-interview', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ role: currentRole, round: selectedRound })
+    });
+    const data = await res.json();
+    document.getElementById('scoringOverlay').style.display = 'none';
+    showScoreModal(data);
+  } catch (err) {
+    document.getElementById('scoringOverlay').style.display = 'none';
+    alert('Could not score the interview. Please try again.');
+    console.error('endInterview error:', err);
+  }
+}
+
+function showScoreModal(data) {
+  const score   = data.score || 0;
+  const grade   = data.grade || 'Average';
+  const summary = data.summary || '';
+  const breakdown     = data.breakdown || {};
+  const strengths     = data.strengths || [];
+  const improvements  = data.improvements || [];
+
+  // Score num
+  const numEl = document.getElementById('modalScoreNum');
+  if (numEl) {
+    numEl.textContent = '0';
+    numEl.style.color = score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--amber)' : 'var(--red)';
+    let cur = 0;
+    const t = setInterval(function(){
+      cur = Math.min(cur + 2, score);
+      numEl.textContent = cur;
+      if (cur >= score) clearInterval(t);
+    }, 20);
+  }
+
+  // Grade badge
+  const gradeEl = document.getElementById('modalGrade');
+  if (gradeEl) {
+    gradeEl.textContent = grade;
+    gradeEl.className = 'score-grade-badge ' + (
+      score >= 75 ? 'badge-excellent' : score >= 50 ? 'badge-good' : 'badge-fair'
+    );
+  }
+
+  // Summary
+  const sumEl = document.getElementById('modalSummary');
+  if (sumEl) sumEl.textContent = summary;
+
+  // Breakdown bars
+  const bdEl = document.getElementById('modalBreakdown');
+  if (bdEl) {
+    const bdNames = {
+      technical_knowledge: 'Technical Knowledge',
+      communication:       'Communication',
+      problem_solving:     'Problem Solving',
+      depth_of_answers:    'Depth of Answers',
+      confidence:          'Confidence',
+    };
+    bdEl.innerHTML = Object.entries(bdNames).map(function([key, label]){
+      const item  = breakdown[key] || {};
+      const s     = item.score || 0;
+      const m     = item.max   || 20;
+      const pct   = Math.round((s/m)*100);
+      const color = pct >= 70 ? 'var(--green)' : pct >= 45 ? 'var(--amber)' : 'var(--red)';
+      const barId = 'bd-bar-' + key;
+      return `
+        <div class="score-bd-item">
+          <div class="score-bd-name">${label}</div>
+          <div class="score-bd-bar-wrap">
+            <div class="score-bd-bar-fill" id="${barId}" style="width:0%;background:${color}"></div>
+          </div>
+          <div class="score-bd-val" style="color:${color}">${s}/${m}</div>
+        </div>`;
+    }).join('');
+
+    // Animate bars
+    requestAnimationFrame(function(){
+      setTimeout(function(){
+        Object.keys(bdNames).forEach(function(key){
+          const item = breakdown[key] || {};
+          const s = item.score || 0;
+          const m = item.max || 20;
+          const el = document.getElementById('bd-bar-' + key);
+          if (el) el.style.width = Math.round((s/m)*100) + '%';
+        });
+      }, 100);
+    });
+  }
+
+  // Strengths
+  const strEl = document.getElementById('modalStrengths');
+  if (strEl) {
+    strEl.innerHTML = strengths.length
+      ? strengths.map(s => `
+          <div class="score-list-item">
+            <div class="score-list-dot" style="background:rgba(74,222,128,0.15);color:var(--green)">✓</div>
+            <span>${s}</span>
+          </div>`).join('')
+      : '<div class="score-list-item" style="color:var(--muted)">No data</div>';
+  }
+
+  // Improvements
+  const impEl = document.getElementById('modalImprovements');
+  if (impEl) {
+    impEl.innerHTML = improvements.length
+      ? improvements.map(s => `
+          <div class="score-list-item">
+            <div class="score-list-dot" style="background:rgba(251,191,36,0.15);color:var(--amber)">→</div>
+            <span>${s}</span>
+          </div>`).join('')
+      : '<div class="score-list-item" style="color:var(--muted)">No data</div>';
+  }
+
+  document.getElementById('scoreModalBackdrop').style.display = 'flex';
+}
+
+function closeScoreModal(event) {
+  if (event.target === document.getElementById('scoreModalBackdrop')) closeScoreModalDirect();
+}
+
+function closeScoreModalDirect() {
+  document.getElementById('scoreModalBackdrop').style.display = 'none';
+}
+
 // ── message helpers ──────────────────────────────────────────
 function appendUserMessage(text) {
   const chatBox = document.getElementById('chatBox');
   if (!chatBox) return;
   const div = document.createElement('div');
-  div.className   = 'msg user';
+  div.className = 'msg user';
   div.textContent = text;
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
@@ -528,9 +1264,7 @@ function removeTyping(el) {
 }
 
 // ── voice ────────────────────────────────────────────────────
-function toggleVoice() {
-  voiceActive ? stopVoice() : startVoice();
-}
+function toggleVoice() { voiceActive ? stopVoice() : startVoice(); }
 
 function startVoice() {
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -539,13 +1273,13 @@ function startVoice() {
   }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
-  recognition.lang           = 'en-US';
+  recognition.lang = 'en-US';
   recognition.interimResults = true;
-  recognition.continuous     = true;
+  recognition.continuous = true;
   voiceActive = true;
   setVoiceUI(true);
 
-  recognition.onresult = function (event) {
+  recognition.onresult = function(event) {
     let interim = '', final = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (event.results[i].isFinal) final   += event.results[i][0].transcript;
@@ -553,10 +1287,9 @@ function startVoice() {
     }
     const ib = document.getElementById('inputBox');
     if (ib) ib.value = final || interim;
-
     if (final) {
       clearTimeout(voiceSilenceTimer);
-      voiceSilenceTimer = setTimeout(function () {
+      voiceSilenceTimer = setTimeout(function(){
         if (voiceActive && final.trim()) {
           sendMessage(final.trim());
           const ib2 = document.getElementById('inputBox');
@@ -566,26 +1299,15 @@ function startVoice() {
     }
   };
 
-  recognition.onerror = function (e) {
-    console.warn('Voice error:', e.error);
-    stopVoice();
-  };
-
-  recognition.onend = function () {
-    if (voiceActive) recognition.start();
-  };
-
+  recognition.onerror = function(e) { console.warn('Voice error:', e.error); stopVoice(); };
+  recognition.onend   = function()  { if (voiceActive) recognition.start(); };
   recognition.start();
 }
 
 function stopVoice() {
   voiceActive = false;
   clearTimeout(voiceSilenceTimer);
-  if (recognition) {
-    recognition.onend = null;
-    recognition.stop();
-    recognition = null;
-  }
+  if (recognition) { recognition.onend = null; recognition.stop(); recognition = null; }
   setVoiceUI(false);
   if (window.speechSynthesis) window.speechSynthesis.cancel();
 }
@@ -598,11 +1320,8 @@ function setVoiceUI(active) {
 function speakText(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(
-    text.replace(/<[^>]*>/g, '').replace(/\*\*/g, '')
-  );
-  utt.rate  = 0.95;
-  utt.pitch = 1;
+  const utt = new SpeechSynthesisUtterance(text.replace(/<[^>]*>/g,'').replace(/\*\*/g,''));
+  utt.rate = 0.95; utt.pitch = 1;
   window.speechSynthesis.speak(utt);
 }
 
