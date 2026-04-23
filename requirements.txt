@@ -32,3 +32,5 @@ fpdf2
 aiofiles
 itsdangerous
 #python -m spacy download en_core_web_sm
+
+reportlab

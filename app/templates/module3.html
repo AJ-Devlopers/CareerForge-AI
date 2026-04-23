@@ -1,0 +1,910 @@
+{% extends "base.html" %}
+
+{% block topbar %}
+<div class="topbar">
+  <div class="topbar-breadcrumb">
+    <a href="/">careerforge</a>
+    <span>/</span>
+    <span>report-roadmap</span>
+  </div>
+  <div class="topbar-right">
+    <div class="status-pill"><span class="dot-live"></span>Groq ready</div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+/* ═══════════════════════════════════════════════
+   MODULE 3 — Complete Styles
+═══════════════════════════════════════════════ */
+.m3-layout{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 60px)}
+.m3-left{border-right:1px solid var(--border);padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto;position:sticky;top:60px;height:calc(100vh - 60px)}
+.m3-right{padding:2rem;overflow-y:auto;background:var(--bg)}
+
+/* Candidate card */
+.m3-cand{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;position:relative;overflow:hidden}
+.m3-cand::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.m3-avatar{width:42px;height:42px;border-radius:11px;background:rgba(232,213,163,.12);border:1px solid rgba(232,213,163,.25);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.1rem;font-weight:900;color:var(--accent);margin-bottom:.65rem}
+.m3-cname{font-family:var(--serif);font-weight:700;font-size:1rem;margin-bottom:.2rem}
+.m3-rbadge{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .5rem;background:rgba(232,213,163,.08);border:1px solid rgba(232,213,163,.2);border-radius:4px;color:var(--accent)}
+.m3-stats{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.65rem}
+.m3-stat{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.55rem .6rem;text-align:center}
+.m3-stat-v{font-family:var(--serif);font-weight:900;font-size:1.4rem;letter-spacing:-.03em;line-height:1;margin-bottom:.15rem}
+.m3-stat-l{font-family:var(--mono);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* Config form */
+.m3-cfg{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.1rem}
+.m3-cfg-title{font-family:var(--mono);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+.m3-field{margin-bottom:.75rem}
+.m3-field-label{font-family:var(--mono);font-size:.6rem;color:var(--muted);letter-spacing:.06em;display:block;margin-bottom:.3rem}
+.m3-input,.m3-select{width:100%;padding:.6rem .8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:.72rem;outline:none;transition:border-color .2s;box-sizing:border-box}
+.m3-input:focus,.m3-select:focus{border-color:var(--accent)}
+.m3-input::placeholder{color:var(--muted)}
+.m3-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%236b6b6b' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .7rem center;background-size:12px;cursor:pointer}
+.m3-gen-btn{width:100%;font-family:var(--mono);font-size:.75rem;letter-spacing:.05em;padding:.8rem;background:var(--accent);color:var(--bg);border:none;border-radius:10px;cursor:pointer;transition:all .2s;font-weight:500;display:flex;align-items:center;justify-content:center;gap:.45rem;margin-top:.2rem}
+.m3-gen-btn:hover:not(:disabled){background:var(--white);box-shadow:0 6px 24px rgba(232,213,163,.2);transform:translateY(-1px)}
+.m3-gen-btn:disabled{background:var(--surface2);color:var(--muted);cursor:not-allowed}
+.m3-dl-btn{width:100%;font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;padding:.7rem;background:transparent;border:1px solid var(--border2);border-radius:10px;color:var(--muted);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.m3-dl-btn:hover{border-color:var(--accent);color:var(--accent)}
+.m3-dl-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Section header */
+.m3-shd{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.85rem;padding-bottom:.45rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+
+/* Empty + Loading */
+.m3-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:500px;text-align:center;gap:.85rem}
+.m3-empty-icon{width:60px;height:60px;border:1px solid var(--border2);border-radius:15px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.m3-empty-title{font-family:var(--serif);font-size:1.2rem;font-weight:700;color:var(--muted)}
+.m3-empty-sub{font-family:var(--mono);font-size:.66rem;color:var(--muted);max-width:300px;line-height:1.65}
+.m3-loading{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:500px;gap:1.5rem}
+.m3-loading.show{display:flex}
+.m3-lstep{font-family:var(--mono);font-size:.66rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+.m3-lstep.active{color:var(--accent)}
+.m3-lstep.done{color:var(--green)}
+.m3-report{display:none}
+.m3-report.show{display:block}
+
+/* Summary row */
+.m3-sum-row{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-bottom:1.75rem}
+.m3-sum-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:.9rem;text-align:center;transition:border-color .2s}
+.m3-sum-card:hover{border-color:var(--border2)}
+.m3-sum-num{font-family:var(--serif);font-weight:900;font-size:1.8rem;letter-spacing:-.04em;line-height:1;margin-bottom:.2rem}
+.m3-sum-label{font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* ══════════════════════════
+   INTERVIEW SCORES
+══════════════════════════ */
+.m3-iv-list{display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.75rem}
+.m3-iv-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.95rem 1.1rem;display:flex;align-items:center;gap:.85rem;transition:border-color .2s;cursor:pointer}
+.m3-iv-item:hover{border-color:var(--border2)}
+.m3-iv-item.expanded{border-color:var(--accent);background:rgba(232,213,163,.03)}
+.m3-iv-round{font-family:var(--serif);font-weight:700;font-size:.95rem;flex:1}
+.m3-iv-bar-wrap{width:80px;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;flex-shrink:0}
+.m3-iv-bar-fill{height:100%;border-radius:2px;width:0%;transition:width .9s cubic-bezier(.34,1.56,.64,1)}
+.m3-iv-grade{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;padding:.18rem .5rem;border-radius:100px;flex-shrink:0}
+.m3-iv-score{font-family:var(--serif);font-weight:900;font-size:1.35rem;letter-spacing:-.03em;min-width:48px;text-align:right;flex-shrink:0}
+.m3-iv-chevron{color:var(--muted);transition:transform .25s;flex-shrink:0}
+.m3-iv-item.expanded .m3-iv-chevron{transform:rotate(180deg)}
+.m3-iv-detail{display:none;padding:.75rem 1.1rem 1rem;border-top:1px solid var(--border)}
+.m3-iv-item.expanded .m3-iv-detail{display:block}
+.m3-iv-summary{font-size:.78rem;color:var(--muted);line-height:1.65;margin-bottom:.75rem}
+.m3-iv-bd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.4rem}
+.m3-iv-bd-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.5rem .7rem}
+.m3-iv-bd-name{font-family:var(--mono);font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem}
+.m3-iv-bd-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-bottom:.25rem}
+.m3-iv-bd-fill{height:100%;border-radius:1px}
+.m3-iv-bd-score{font-family:var(--mono);font-size:.65rem;color:var(--text)}
+.m3-iv-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.6rem}
+.m3-iv-tag{font-family:var(--mono);font-size:.6rem;padding:.18rem .5rem;border-radius:4px}
+.m3-iv-overall{background:rgba(232,213,163,.06);border:1px solid rgba(232,213,163,.2);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;margin-top:.6rem;margin-bottom:1.75rem}
+.m3-iv-overall-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);flex:1}
+.m3-iv-overall-score{font-family:var(--serif);font-weight:900;font-size:2.5rem;letter-spacing:-.04em;line-height:1}
+
+/* ══════════════════════════
+   SUGGESTIONS
+══════════════════════════ */
+.m3-sugs{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.75rem}
+.m3-sug-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.m3-sug-card:hover{border-color:var(--border2)}
+.m3-sug-card.open{border-color:var(--accent)}
+.m3-sug-header{display:flex;align-items:center;gap:.75rem;padding:.9rem 1rem;cursor:pointer;user-select:none}
+.m3-sug-num{font-family:var(--mono);font-size:.65rem;color:var(--accent);font-weight:600;min-width:22px}
+.m3-sug-cat{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:.15rem .45rem;border-radius:4px;flex-shrink:0}
+.m3-sug-title{flex:1;font-family:var(--serif);font-weight:700;font-size:.92rem}
+.m3-sug-pri{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;padding:.15rem .5rem;border-radius:100px;flex-shrink:0}
+.m3-sug-chevron{color:var(--muted);transition:transform .25s;flex-shrink:0}
+.m3-sug-card.open .m3-sug-chevron{transform:rotate(180deg)}
+/* Expandable body */
+.m3-sug-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.m3-sug-card.open .m3-sug-body{max-height:600px}
+.m3-sug-inner{padding:.1rem 1rem 1rem 1rem;border-top:1px solid var(--border)}
+.m3-sug-why{font-size:.78rem;color:var(--muted);line-height:1.65;margin-bottom:.85rem;padding-top:.7rem}
+/* Topic within suggestion */
+.m3-topic{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.85rem;margin-bottom:.5rem}
+.m3-topic-name{font-family:var(--serif);font-weight:700;font-size:.88rem;color:var(--accent);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem}
+.m3-topic-desc{font-size:.76rem;color:var(--muted);line-height:1.65;margin-bottom:.6rem}
+.m3-topic-examples{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.55rem}
+.m3-topic-example{font-family:var(--mono);font-size:.65rem;color:var(--text);background:rgba(232,213,163,.05);border:1px solid rgba(232,213,163,.1);border-radius:6px;padding:.4rem .65rem;line-height:1.5}
+.m3-topic-time{font-family:var(--mono);font-size:.6rem;color:var(--muted)}
+.m3-quick-wins{margin-top:.75rem;padding-top:.65rem;border-top:1px solid var(--border)}
+.m3-qw-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.45rem}
+.m3-qw-list{display:flex;flex-wrap:wrap;gap:.35rem}
+.m3-qw-item{font-family:var(--mono);font-size:.62rem;padding:.2rem .55rem;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.15);border-radius:4px;color:var(--green)}
+
+/* ══════════════════════════
+   PROJECTS
+══════════════════════════ */
+.m3-proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.7rem;margin-bottom:1.75rem}
+.m3-proj-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.15rem;transition:all .2s;cursor:pointer;overflow:hidden}
+.m3-proj-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.m3-proj-card.open{border-color:var(--accent)}
+.m3-proj-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.55rem}
+.m3-proj-title{font-family:var(--serif);font-weight:700;font-size:1rem;color:var(--accent)}
+.m3-proj-diff{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;padding:.18rem .5rem;border-radius:100px;flex-shrink:0}
+.m3-proj-desc{font-size:.75rem;color:var(--muted);line-height:1.65;margin-bottom:.65rem}
+.m3-proj-skills{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.6rem}
+.m3-proj-skill{font-family:var(--mono);font-size:.58rem;padding:.15rem .45rem;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--muted)}
+.m3-proj-impact{font-family:var(--mono);font-size:.62rem;color:var(--green);display:flex;align-items:flex-start;gap:.3rem;line-height:1.5;margin-bottom:.6rem}
+/* Steps expand */
+.m3-proj-steps-toggle{font-family:var(--mono);font-size:.65rem;color:var(--accent);background:none;border:1px solid rgba(232,213,163,.2);border-radius:6px;padding:.3rem .7rem;cursor:pointer;transition:all .2s;margin-top:.2rem}
+.m3-proj-steps-toggle:hover{background:rgba(232,213,163,.05)}
+.m3-proj-steps{max-height:0;overflow:hidden;transition:max-height .35s ease;margin-top:.6rem}
+.m3-proj-card.open .m3-proj-steps{max-height:400px}
+.m3-proj-step-item{display:flex;gap:.6rem;padding:.45rem 0;border-bottom:1px solid var(--border)}
+.m3-proj-step-item:last-child{border-bottom:none}
+.m3-proj-step-num{font-family:var(--mono);font-size:.6rem;color:var(--accent);min-width:20px;font-weight:600}
+.m3-proj-step-info{}
+.m3-proj-step-title{font-family:var(--mono);font-size:.7rem;color:var(--text);font-weight:500;margin-bottom:.15rem}
+.m3-proj-step-desc{font-size:.7rem;color:var(--muted);line-height:1.5}
+.m3-proj-step-dur{font-family:var(--mono);font-size:.6rem;color:var(--amber)}
+
+/* ══════════════════════════
+   JOURNEY MAP ROADMAP
+══════════════════════════ */
+.m3-journey{position:relative;margin-bottom:2rem}
+
+/* Phase wrapper */
+.m3-phase{margin-bottom:0;animation:fadeUp .6s ease both}
+
+/* Phase header */
+.m3-ph-hdr{display:flex;align-items:center;gap:.7rem;padding:1rem 1.15rem;background:var(--surface);border:1px solid var(--border);border-radius:13px;margin-bottom:0;cursor:default;position:relative;z-index:2}
+.m3-ph-emoji{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.m3-ph-info{flex:1}
+.m3-ph-name{font-family:var(--serif);font-weight:700;font-size:1rem;margin-bottom:.1rem}
+.m3-ph-meta{font-family:var(--mono);font-size:.6rem;color:var(--muted)}
+.m3-ph-badge{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;padding:.25rem .6rem;border-radius:100px;flex-shrink:0}
+
+/* Vertical connector from phase header down to steps */
+.m3-ph-body{position:relative;padding-left:24px;margin-top:0}
+/* The vertical line */
+.m3-ph-body::before{content:'';position:absolute;left:18px;top:0;bottom:20px;width:2px;border-radius:1px;background:var(--border)}
+
+/* Step */
+.m3-step{position:relative;margin-top:0;padding-top:0;animation:fadeUp .5s ease both}
+/* Horizontal connector from line to card */
+.m3-step::before{content:'';position:absolute;left:-24px;top:21px;width:22px;height:2px;background:var(--border)}
+/* Dot on the line */
+.m3-step-dot{position:absolute;left:-30px;top:15px;width:14px;height:14px;border-radius:50%;border:2px solid var(--border2);background:var(--bg);z-index:1;transition:all .4s;box-sizing:border-box}
+.m3-step.reached .m3-step-dot{border-color:var(--accent);background:var(--accent);box-shadow:0 0 12px rgba(232,213,163,.45)}
+.m3-step-card{margin-left:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.m3-step-card:hover{border-color:var(--border2);transform:translateX(3px)}
+.m3-step-card.expanded{border-color:var(--accent);background:rgba(232,213,163,.02)}
+.m3-step-top{display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:.85rem 1rem}
+.m3-step-day{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .5rem;border-radius:4px;flex-shrink:0}
+.m3-step-title{flex:1;font-family:var(--serif);font-weight:700;font-size:.92rem}
+.m3-step-chevron{color:var(--muted);transition:transform .25s;flex-shrink:0}
+.m3-step-card.expanded .m3-step-chevron{transform:rotate(180deg)}
+/* Expandable body */
+.m3-step-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.m3-step-card.expanded .m3-step-body{max-height:700px}
+.m3-step-inner{padding:.1rem 1rem 1rem;border-top:1px solid var(--border)}
+.m3-step-desc{font-size:.78rem;color:var(--muted);line-height:1.65;margin-bottom:.75rem;padding-top:.65rem}
+/* Topic within step */
+.m3-step-topic{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.8rem;margin-bottom:.45rem}
+.m3-step-topic-name{font-family:var(--mono);font-size:.65rem;color:var(--accent);font-weight:600;letter-spacing:.04em;margin-bottom:.4rem;display:flex;align-items:center;gap:.35rem}
+.m3-step-subs{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem}
+.m3-step-sub{font-family:var(--mono);font-size:.6rem;padding:.15rem .4rem;background:rgba(232,213,163,.06);border:1px solid rgba(232,213,163,.12);border-radius:4px;color:var(--muted)}
+.m3-step-resources{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.35rem}
+.m3-step-res{font-family:var(--mono);font-size:.6rem;padding:.15rem .45rem;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted)}
+.m3-step-practice{font-family:var(--mono);font-size:.62rem;color:var(--amber);display:flex;align-items:center;gap:.3rem}
+.m3-step-hours{font-family:var(--mono);font-size:.58rem;color:var(--muted)}
+.m3-step-milestone{display:flex;align-items:flex-start;gap:.4rem;font-family:var(--mono);font-size:.68rem;color:var(--green);margin-top:.65rem;padding-top:.6rem;border-top:1px solid var(--border);line-height:1.5}
+.m3-step-checkpoint{font-family:var(--mono);font-size:.65rem;color:var(--muted);margin-top:.3rem;line-height:1.5}
+
+/* Phase connector arrow */
+.m3-phase-conn{display:flex;align-items:center;gap:.5rem;padding:.4rem 0 .4rem 18px;position:relative}
+.m3-phase-conn::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--border)}
+.m3-conn-arrow{font-family:var(--mono);font-size:.65rem;color:var(--accent);background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:.2rem .55rem;position:relative;z-index:1;display:flex;align-items:center;gap:.35rem}
+
+/* ══════════════════════════
+   TIPS
+══════════════════════════ */
+.m3-tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.65rem;margin-bottom:1.75rem}
+.m3-tip-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.95rem;transition:border-color .2s}
+.m3-tip-card:hover{border-color:var(--border2)}
+.m3-tip-num{font-family:var(--serif);font-size:1.7rem;font-weight:900;color:rgba(232,213,163,.12);line-height:1;margin-bottom:.4rem;letter-spacing:-.04em}
+.m3-tip-text{font-size:.78rem;color:var(--muted);line-height:1.65}
+
+/* Profile summary banner */
+.m3-profile-banner{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.1rem 1.25rem;margin-bottom:1.75rem;position:relative;overflow:hidden}
+.m3-profile-banner::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent)}
+.m3-profile-text{font-size:.85rem;color:var(--muted);line-height:1.75;padding-left:.5rem}
+
+/* Skills wrap */
+.m3-skills-wrap{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1.75rem}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotPop{0%{transform:scale(0)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.m3-step.reached .m3-step-dot{animation:dotPop .35s ease both}
+
+@media(max-width:900px){.m3-layout{grid-template-columns:1fr}.m3-left{position:relative;height:auto;top:0}.m3-sum-row{grid-template-columns:repeat(3,1fr)}}
+</style>
+
+<div class="m3-layout">
+  <!-- ═══════ LEFT ═══════ -->
+  <div class="m3-left">
+    <div class="m3-cand">
+      <div class="m3-avatar">{{ candidate_name[0].upper() if candidate_name else '?' }}</div>
+      <div class="m3-cname">{{ candidate_name or "Candidate" }}</div>
+      <div class="m3-rbadge" id="m3RoleBadge">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        {{ default_role or "No role yet" }}
+      </div>
+      <div class="m3-stats">
+        <div class="m3-stat">
+          <div class="m3-stat-v" style="color:{% if ats_score >= 75 %}var(--green){% elif ats_score >= 50 %}var(--amber){% else %}var(--red){% endif %}">{{ ats_score or 0 }}</div>
+          <div class="m3-stat-l">ATS</div>
+        </div>
+        <div class="m3-stat">
+          <div class="m3-stat-v" style="color:var(--accent)">{{ skills_found|length }}</div>
+          <div class="m3-stat-l">Skills</div>
+        </div>
+        <div class="m3-stat">
+          <div class="m3-stat-v" style="color:{% if overall_interview_score >= 75 %}var(--green){% elif overall_interview_score >= 50 %}var(--amber){% else %}var(--muted){% endif %}">{{ overall_interview_score or '—' }}</div>
+          <div class="m3-stat-l">Avg Score</div>
+        </div>
+        <div class="m3-stat">
+          <div class="m3-stat-v" style="color:var(--muted)">{{ interview_results|length }}</div>
+          <div class="m3-stat-l">Attempts</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="m3-cfg">
+      <div class="m3-cfg-title">Generate Roadmap</div>
+      <div class="m3-field">
+        <label class="m3-field-label">Target Role</label>
+        <input type="text" id="roleInput" class="m3-input" placeholder="e.g. ML Engineer" value="{{ default_role }}"/>
+      </div>
+      <div class="m3-field">
+        <label class="m3-field-label">Duration</label>
+        <select id="durationSelect" class="m3-select">
+          <option value="1 month">1 Month — Sprint</option>
+          <option value="2 months">2 Months — Short</option>
+          <option value="3 months" selected>3 Months — Standard</option>
+          <option value="6 months">6 Months — Thorough</option>
+          <option value="12 months">12 Months — Complete</option>
+        </select>
+      </div>
+      <div class="m3-field">
+        <label class="m3-field-label">Primary Goal</label>
+        <select id="goalSelect" class="m3-select">
+          <option value="Get hired at a top tech company">Land Top Tech Job</option>
+          <option value="Switch to this role from another field">Career Switch</option>
+          <option value="Get my first job in tech">First Tech Job</option>
+          <option value="Level up from junior to mid-level">Junior → Mid</option>
+          <option value="Level up from mid to senior">Mid → Senior</option>
+          <option value="Prepare for FAANG interviews">FAANG Prep</option>
+          <option value="Freelance and build projects">Freelance</option>
+        </select>
+      </div>
+      <button class="m3-gen-btn" id="generateBtn" onclick="generateRoadmap()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Generate Roadmap
+      </button>
+    </div>
+
+    <button class="m3-dl-btn" id="downloadBtn" disabled onclick="downloadPDF()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download PDF Report
+    </button>
+  </div>
+
+  <!-- ═══════ RIGHT ═══════ -->
+  <div class="m3-right" id="m3Right">
+
+    <!-- EMPTY -->
+    <div class="m3-empty" id="m3Empty">
+      <div class="m3-empty-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div class="m3-empty-title">Your report awaits</div>
+      <div class="m3-empty-sub">
+        {% if not candidate_name %}Upload your resume in Module 1 first, then configure and generate your roadmap.
+        {% else %}Configure your role and goals on the left, then click Generate Roadmap.{% endif %}
+      </div>
+
+      <!-- Show existing interview data even before roadmap -->
+      {% if interview_results %}
+      <div style="width:100%;max-width:640px;margin-top:2rem">
+        <div class="m3-shd">Interview Attempts</div>
+        <div class="m3-iv-list">
+          {% for ir in interview_results %}
+          {% set sc = ir.score or 0 %}
+          <div class="m3-iv-item" onclick="this.classList.toggle('expanded')">
+            <div class="m3-iv-round">{{ ir.round.replace('_',' ').title() }}</div>
+            <div class="m3-iv-bar-wrap"><div class="m3-iv-bar-fill" style="width:{{ sc }}%;background:{% if sc >= 75 %}var(--green){% elif sc >= 50 %}var(--amber){% else %}var(--red){% endif %}"></div></div>
+            <span class="m3-iv-grade {% if sc >= 75 %}badge-excellent{% elif sc >= 50 %}badge-good{% else %}badge-fair{% endif %}">{{ ir.grade }}</span>
+            <div class="m3-iv-score" style="color:{% if sc >= 75 %}var(--green){% elif sc >= 50 %}var(--amber){% else %}var(--red){% endif %}">{{ sc }}</div>
+            <svg class="m3-iv-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            {% if ir.summary %}
+            <div class="m3-iv-detail"><div class="m3-iv-summary">{{ ir.summary }}</div></div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        {% if overall_interview_score %}
+        <div class="m3-iv-overall">
+          <div class="m3-iv-overall-label">Overall Average Score</div>
+          <div class="m3-iv-overall-score" style="color:{% if overall_interview_score >= 75 %}var(--green){% elif overall_interview_score >= 50 %}var(--amber){% else %}var(--red){% endif %}">{{ overall_interview_score }}</div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- LOADING -->
+    <div class="m3-loading" id="m3Loading">
+      <div class="spinner-ring"></div>
+      <div style="display:flex;flex-direction:column;gap:.55rem;align-items:center">
+        <div class="m3-lstep" id="ls1"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>Analyzing your profile...</div>
+        <div class="m3-lstep" id="ls2"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>Running suggestion agent...</div>
+        <div class="m3-lstep" id="ls3"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>Evaluating interview performance...</div>
+        <div class="m3-lstep" id="ls4"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>Building personalized roadmap...</div>
+      </div>
+    </div>
+
+    <!-- REPORT -->
+    <div class="m3-report" id="m3Report">
+
+      <!-- Profile summary -->
+      <div class="m3-profile-banner" id="m3ProfileBanner" style="display:none">
+        <div class="m3-profile-text" id="m3ProfileText"></div>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="m3-shd">Overview</div>
+      <div class="m3-sum-row" id="m3SumRow"></div>
+
+      <!-- Interview results (rich, expandable) -->
+      <div class="m3-shd">Interview Performance</div>
+      <div class="m3-iv-list" id="m3IvList"></div>
+      <div id="m3IvOverall"></div>
+
+      <!-- Skills -->
+      <div class="m3-shd">Skills Profile</div>
+      <div class="m3-skills-wrap" id="m3SkillsWrap"></div>
+
+      <!-- Suggestions (expandable with detailed plan) -->
+      <div class="m3-shd" style="margin-top:1.5rem">Resume Improvement Plan</div>
+      <div class="m3-sugs" id="m3Sugs"></div>
+
+      <!-- Projects (expandable with steps) -->
+      <div class="m3-shd">Recommended Projects</div>
+      <div class="m3-proj-grid" id="m3ProjGrid"></div>
+
+      <!-- Roadmap (animated journey map) -->
+      <div class="m3-shd" id="roadmapHd">
+        <span>Learning Roadmap</span>
+        <span id="roadmapMeta" style="color:var(--accent);font-size:.6rem"></span>
+      </div>
+      <div class="m3-journey" id="m3Journey"></div>
+
+      <!-- Tips -->
+      <div class="m3-shd">Career Tips</div>
+      <div class="m3-tips-grid" id="m3Tips"></div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Server data ────────────────────────────────────────────
+const SD = {
+  name:     "{{ candidate_name | default('') }}",
+  ats:      {{ ats_score or 0 }},
+  skills:   {{ skills_found | tojson | default('[]') }},
+  ivs:      {{ interview_results | tojson | default('[]') }},
+  overall:  {{ overall_interview_score or 0 }},
+  role:     "{{ default_role | default('') }}",
+};
+
+const PHASE_COLORS = {
+  amber:'var(--amber)', green:'var(--green)', blue:'#60a5fa',
+  purple:'#a78bfa', red:'var(--red)', teal:'#2dd4bf',
+};
+
+let currentRoadmap = null;
+
+// ══════════════════════════════════════════
+// GENERATE
+// ══════════════════════════════════════════
+async function generateRoadmap() {
+  const role     = document.getElementById('roleInput').value.trim();
+  const duration = document.getElementById('durationSelect').value;
+  const goal     = document.getElementById('goalSelect').value;
+  if (!role) {
+    const el = document.getElementById('roleInput');
+    el.focus(); el.style.borderColor='var(--red)';
+    setTimeout(() => el.style.borderColor='', 1500); return;
+  }
+
+  document.getElementById('m3RoleBadge').textContent = role;
+  document.getElementById('m3Empty').style.display   = 'none';
+  document.getElementById('m3Report').classList.remove('show');
+  document.getElementById('m3Loading').classList.add('show');
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('downloadBtn').disabled = true;
+
+  const steps = ['ls1','ls2','ls3','ls4'];
+  steps.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'm3-lstep';
+    setTimeout(() => {
+      if (i > 0) {
+        const prev = document.getElementById(steps[i-1]);
+        if (prev) prev.className = 'm3-lstep done';
+      }
+      el.className = 'm3-lstep active';
+    }, i * 800);
+  });
+
+  try {
+    const res  = await fetch('/module3/generate-roadmap', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ role, duration, goal })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    currentRoadmap = data;
+
+    document.getElementById('ls4').className = 'm3-lstep done';
+    document.getElementById('m3Loading').classList.remove('show');
+    renderReport(data);
+    document.getElementById('downloadBtn').disabled = false;
+  } catch(err) {
+    document.getElementById('m3Loading').classList.remove('show');
+    document.getElementById('m3Empty').style.display = 'flex';
+    alert('Could not generate: ' + err.message);
+  } finally {
+    document.getElementById('generateBtn').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════
+// RENDER REPORT
+// ══════════════════════════════════════════
+function renderReport(data) {
+  // Profile summary
+  if (data.profile_summary) {
+    const banner = document.getElementById('m3ProfileBanner');
+    document.getElementById('m3ProfileText').textContent = data.profile_summary;
+    banner.style.display = 'block';
+  }
+
+  renderSummary(data);
+  renderInterviews(data);
+  renderSkills();
+  renderSuggestions(data.suggestions || []);
+  renderProjects(data.project_ideas || []);
+  renderRoadmap(data);
+  renderTips(data.overall_tips || []);
+
+  document.getElementById('m3Report').classList.add('show');
+  document.getElementById('m3Report').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ── Summary ────────────────────────────────────────────────
+function renderSummary(data) {
+  const el = document.getElementById('m3SumRow');
+  const ats = SD.ats;
+  const ac  = ats >= 75 ? 'var(--green)' : ats >= 50 ? 'var(--amber)' : 'var(--red)';
+  const ov  = data.overall_interview_score || SD.overall;
+  const oc  = ov >= 75 ? 'var(--green)'  : ov >= 50  ? 'var(--amber)' : 'var(--red)';
+  const cs  = data.combined_score || 0;
+  const cc  = cs >= 75 ? 'var(--green)'  : cs >= 50  ? 'var(--amber)' : 'var(--red)';
+
+  el.innerHTML = `
+    <div class="m3-sum-card">
+      <div class="m3-sum-num" style="color:${ac}">${ats}</div>
+      <div class="m3-sum-label">ATS Score</div>
+    </div>
+    <div class="m3-sum-card">
+      <div class="m3-sum-num" style="color:var(--accent)">${SD.skills.length}</div>
+      <div class="m3-sum-label">Skills</div>
+    </div>
+    <div class="m3-sum-card">
+      <div class="m3-sum-num" style="color:${oc}">${ov || '—'}</div>
+      <div class="m3-sum-label">Avg Interview</div>
+    </div>
+    <div class="m3-sum-card">
+      <div class="m3-sum-num" style="color:${cc}">${cs || '—'}</div>
+      <div class="m3-sum-label">Combined</div>
+    </div>
+    <div class="m3-sum-card">
+      <div class="m3-sum-num" style="color:var(--muted);font-size:1.1rem">${data.grade || '—'}</div>
+      <div class="m3-sum-label">Overall Grade</div>
+    </div>`;
+}
+
+// ── Interviews (rich expandable) ───────────────────────────
+function renderInterviews(data) {
+  const el   = document.getElementById('m3IvList');
+  const ovEl = document.getElementById('m3IvOverall');
+  const ivs  = SD.ivs;
+
+  if (!ivs.length) {
+    el.innerHTML = `<div style="font-family:var(--mono);font-size:.7rem;color:var(--muted);padding:1rem;text-align:center">No interview attempts yet. Go to Module 2 to practice.</div>`;
+    return;
+  }
+
+  el.innerHTML = ivs.map((ir, idx) => {
+    const sc    = ir.score || 0;
+    const color = sc >= 75 ? 'var(--green)' : sc >= 50 ? 'var(--amber)' : 'var(--red)';
+    const gc    = sc >= 75 ? 'badge-excellent' : sc >= 50 ? 'badge-good' : 'badge-fair';
+    const rnd   = (ir.round || '').replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+    const bd    = ir.breakdown || {};
+
+    // Breakdown mini bars
+    const bdHtml = Object.entries(bd).map(([key, val]) => {
+      if (typeof val !== 'object') return '';
+      const s = val.score || 0, m = val.max || 20;
+      const pct = Math.round((s/m)*100);
+      const bc  = pct >= 70 ? 'var(--green)' : pct >= 45 ? 'var(--amber)' : 'var(--red)';
+      const lbl = key.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+      return `<div class="m3-iv-bd-item">
+        <div class="m3-iv-bd-name">${lbl}</div>
+        <div class="m3-iv-bd-bar"><div class="m3-iv-bd-fill" data-w="${pct}" style="width:0%;background:${bc}"></div></div>
+        <div class="m3-iv-bd-score" style="color:${bc}">${s}/${m}</div>
+      </div>`;
+    }).join('');
+
+    const strs = (ir.strengths || []).slice(0,3);
+    const imps = (ir.improvements || []).slice(0,3);
+
+    return `
+      <div class="m3-iv-item" id="iv-${idx}" onclick="toggleIv(${idx})">
+        <div class="m3-iv-round">${rnd}</div>
+        <div class="m3-iv-bar-wrap"><div class="m3-iv-bar-fill" data-w="${sc}" style="width:0%;background:${color}"></div></div>
+        <span class="m3-iv-grade ${gc}">${ir.grade || ''}</span>
+        <div class="m3-iv-score" style="color:${color}">${sc}</div>
+        <svg class="m3-iv-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="m3-iv-detail">
+          ${ir.summary ? `<div class="m3-iv-summary">${ir.summary}</div>` : ''}
+          ${bdHtml ? `<div class="m3-iv-bd-grid">${bdHtml}</div>` : ''}
+          ${strs.length ? `<div class="m3-iv-tags">${strs.map(s=>`<span class="m3-iv-tag" style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--green)">✓ ${s}</span>`).join('')}</div>` : ''}
+          ${imps.length ? `<div class="m3-iv-tags">${imps.map(s=>`<span class="m3-iv-tag" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:var(--amber)">→ ${s}</span>`).join('')}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  // Animate bars
+  requestAnimationFrame(() => setTimeout(() => {
+    el.querySelectorAll('.m3-iv-bar-fill, .m3-iv-bd-fill').forEach(b => {
+      b.style.width = b.dataset.w + '%';
+    });
+  }, 200));
+
+  // Overall score block
+  const ov = data.overall_interview_score || SD.overall;
+  if (ov) {
+    const oc = ov >= 75 ? 'var(--green)' : ov >= 50 ? 'var(--amber)' : 'var(--red)';
+    ovEl.innerHTML = `
+      <div class="m3-iv-overall">
+        <div>
+          <div class="m3-iv-overall-label">Overall Average Score</div>
+          <div style="font-family:var(--mono);font-size:.62rem;color:var(--muted)">${ivs.length} interview attempt${ivs.length !== 1?'s':''}</div>
+        </div>
+        <div class="m3-iv-overall-score" style="color:${oc}">${ov}<span style="font-size:1rem;color:var(--muted)">/100</span></div>
+      </div>`;
+  }
+}
+
+function toggleIv(idx) {
+  const el = document.getElementById('iv-' + idx);
+  if (!el) return;
+  el.classList.toggle('expanded');
+  // Animate breakdown bars inside
+  el.querySelectorAll('.m3-iv-bd-fill').forEach(b => {
+    b.style.width = b.dataset.w + '%';
+  });
+}
+
+// ── Skills ────────────────────────────────────────────────
+function renderSkills() {
+  const el = document.getElementById('m3SkillsWrap');
+  if (!SD.skills.length) { el.innerHTML='<span style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">No skills data.</span>'; return; }
+  el.innerHTML = SD.skills.map(s=>`<span class="skill-tag">${s}</span>`).join('');
+}
+
+// ── Suggestions (expandable with detail plan) ─────────────
+function renderSuggestions(suggestions) {
+  const el = document.getElementById('m3Sugs');
+  if (!suggestions.length) { el.innerHTML='<div style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">No suggestions available.</div>'; return; }
+
+  const CAT_COLORS = {
+    Skills:'rgba(96,165,250,.1)', Projects:'rgba(74,222,128,.1)',
+    Structure:'rgba(251,191,36,.1)', Metrics:'rgba(248,113,113,.1)',
+    Keywords:'rgba(167,139,250,.1)', Experience:'rgba(45,212,191,.1)',
+    Education:'rgba(232,213,163,.1)'
+  };
+  const CAT_BORDER = {
+    Skills:'rgba(96,165,250,.25)', Projects:'rgba(74,222,128,.25)',
+    Structure:'rgba(251,191,36,.25)', Metrics:'rgba(248,113,113,.25)',
+    Keywords:'rgba(167,139,250,.25)', Experience:'rgba(45,212,191,.25)',
+    Education:'rgba(232,213,163,.25)'
+  };
+
+  el.innerHTML = suggestions.map((sug, i) => {
+    const dp  = sug.detail_plan || {};
+    const pri = sug.priority || 'Medium';
+    const pc  = pri === 'High' ? 'var(--red)' : pri === 'Medium' ? 'var(--amber)' : 'var(--green)';
+    const cat = sug.category || 'General';
+    const catBg  = CAT_COLORS[cat]  || 'rgba(232,213,163,.08)';
+    const catBdr = CAT_BORDER[cat]  || 'rgba(232,213,163,.2)';
+
+    const topicsHtml = (dp.topics || []).map(topic => `
+      <div class="m3-topic">
+        <div class="m3-topic-name">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          ${topic.topic || ''}
+          ${topic.time_needed ? `<span style="font-family:var(--mono);font-size:.58rem;color:var(--muted);margin-left:auto">~${topic.time_needed}</span>` : ''}
+        </div>
+        <div class="m3-topic-desc">${topic.description || ''}</div>
+        ${(topic.examples||[]).length ? `<div class="m3-topic-examples">${topic.examples.map(e=>`<div class="m3-topic-example">${e}</div>`).join('')}</div>` : ''}
+      </div>`).join('');
+
+    const qwHtml = (dp.quick_wins || []).length ? `
+      <div class="m3-quick-wins">
+        <div class="m3-qw-label">Quick Wins</div>
+        <div class="m3-qw-list">${dp.quick_wins.map(qw=>`<span class="m3-qw-item">✓ ${qw}</span>`).join('')}</div>
+      </div>` : '';
+
+    return `
+      <div class="m3-sug-card" id="sug-${i}" style="animation-delay:${i*.07}s">
+        <div class="m3-sug-header" onclick="toggleSug(${i})">
+          <div class="m3-sug-num">${String(i+1).padStart(2,'0')}</div>
+          <div class="m3-sug-cat" style="background:${catBg};border:1px solid ${catBdr};color:var(--accent)">${cat}</div>
+          <div class="m3-sug-title">${sug.title || ''}</div>
+          <div class="m3-sug-pri" style="color:${pc};border:1px solid ${pc}33;background:${pc}11">${pri}</div>
+          <svg class="m3-sug-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="m3-sug-body">
+          <div class="m3-sug-inner">
+            ${dp.why ? `<div class="m3-sug-why">${dp.why}</div>` : ''}
+            ${topicsHtml}
+            ${qwHtml}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleSug(i) {
+  document.getElementById('sug-' + i)?.classList.toggle('open');
+}
+
+// ── Projects (expandable with steps) ─────────────────────
+function renderProjects(projects) {
+  const el = document.getElementById('m3ProjGrid');
+  if (!projects.length) { el.style.display='none'; return; }
+
+  el.innerHTML = projects.map((p, i) => {
+    const diff  = p.difficulty || 'Intermediate';
+    const dc    = diff === 'Advanced' ? 'var(--red)' : diff === 'Intermediate' ? 'var(--amber)' : 'var(--green)';
+    const stepsHtml = (p.implementation_steps || []).map(s => `
+      <div class="m3-proj-step-item">
+        <div class="m3-proj-step-num">${s.step || ''}</div>
+        <div class="m3-proj-step-info">
+          <div class="m3-proj-step-title">${s.title || ''} <span class="m3-proj-step-dur">${s.duration ? '· ' + s.duration : ''}</span></div>
+          <div class="m3-proj-step-desc">${s.description || ''}</div>
+        </div>
+      </div>`).join('');
+
+    return `
+      <div class="m3-proj-card" id="proj-${i}">
+        <div class="m3-proj-top">
+          <div class="m3-proj-title">${p.title || ''}</div>
+          <span class="m3-proj-diff" style="color:${dc};border:1px solid ${dc}33;background:${dc}11">${diff}</span>
+        </div>
+        <div class="m3-proj-desc">${p.description || ''}</div>
+        <div class="m3-proj-skills">${(p.skills_used||[]).map(s=>`<span class="m3-proj-skill">${s}</span>`).join('')}</div>
+        ${p.tech_stack ? `<div class="m3-proj-skills">${(p.tech_stack||[]).map(s=>`<span class="m3-proj-skill" style="border-color:var(--accent);color:var(--accent)">${s}</span>`).join('')}</div>` : ''}
+        ${p.impact ? `<div class="m3-proj-impact"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>${p.impact}</div>` : ''}
+        ${p.time_estimate ? `<div style="font-family:var(--mono);font-size:.6rem;color:var(--muted);margin-bottom:.4rem">Est. ${p.time_estimate}</div>` : ''}
+        ${stepsHtml ? `
+        <button class="m3-proj-steps-toggle" onclick="toggleProj(${i}, event)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          View Implementation Steps
+        </button>
+        <div class="m3-proj-steps">${stepsHtml}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function toggleProj(i, e) {
+  e.stopPropagation();
+  const card = document.getElementById('proj-' + i);
+  card?.classList.toggle('open');
+  const btn = card?.querySelector('.m3-proj-steps-toggle');
+  if (btn) btn.innerHTML = card.classList.contains('open')
+    ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg> Hide Steps'
+    : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> View Implementation Steps';
+}
+
+// ═══════════════════════════════════════
+// JOURNEY MAP ROADMAP
+// ═══════════════════════════════════════
+function renderRoadmap(data) {
+  const container = document.getElementById('m3Journey');
+  const meta      = document.getElementById('roadmapMeta');
+  if (meta) meta.textContent = `${data.role} · ${data.duration} · ${data.total_weeks} weeks`;
+
+  const phases = data.phases || [];
+  if (!phases.length) { container.innerHTML='<div style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">No roadmap generated.</div>'; return; }
+
+  container.innerHTML = '';
+
+  phases.forEach((phase, pi) => {
+    const color = PHASE_COLORS[phase.color] || 'var(--amber)';
+
+    // PHASE WRAPPER
+    const phEl = document.createElement('div');
+    phEl.className = 'm3-phase';
+    phEl.style.animationDelay = `${pi * 0.1}s`;
+
+    // Phase header
+    phEl.innerHTML = `
+      <div class="m3-ph-hdr">
+        <div class="m3-ph-emoji" style="background:${color}18;border:1px solid ${color}33">${phase.emoji || '→'}</div>
+        <div class="m3-ph-info">
+          <div class="m3-ph-name" style="color:${color}">Phase ${phase.phase} — ${phase.title}</div>
+          <div class="m3-ph-meta">${phase.focus || ''}</div>
+        </div>
+        <div class="m3-ph-badge" style="background:${color}18;border:1px solid ${color}33;color:${color}">
+          ${phase.duration_weeks} wk${phase.duration_weeks !== 1 ? 's' : ''}
+        </div>
+      </div>`;
+
+    // Steps container (the vertical journey)
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'm3-ph-body';
+    bodyEl.style.borderLeft = `2px solid ${color}30`;
+
+    (phase.steps || []).forEach((step, si) => {
+      const stepEl = document.createElement('div');
+      stepEl.className = 'm3-step';
+      stepEl.dataset.pi = pi;
+      stepEl.dataset.si = si;
+      stepEl.style.animationDelay = `${(pi * 0.1) + (si * 0.08)}s`;
+
+      // Dot
+      const dotEl = document.createElement('div');
+      dotEl.className = 'm3-step-dot';
+      dotEl.style.borderColor = color;
+
+      // Topics html
+      const topicsHtml = (step.topics || []).map(topic => `
+        <div class="m3-step-topic">
+          <div class="m3-step-topic-name">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            ${topic.name || ''}
+            ${topic.hours ? `<span class="m3-step-hours">${topic.hours}h</span>` : ''}
+          </div>
+          ${(topic.subtopics||[]).length ? `<div class="m3-step-subs">${topic.subtopics.map(s=>`<span class="m3-step-sub">${s}</span>`).join('')}</div>` : ''}
+          ${(topic.resources||[]).length ? `<div class="m3-step-resources">${topic.resources.slice(0,3).map(r=>`<span class="m3-step-res">📎 ${r}</span>`).join('')}</div>` : ''}
+          ${topic.practice ? `<div class="m3-step-practice"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>${topic.practice}</div>` : ''}
+        </div>`).join('');
+
+      stepEl.innerHTML = `
+        <div class="m3-step-card" onclick="toggleStep(this)">
+          <div class="m3-step-top">
+            <div class="m3-step-day" style="background:${color}18;color:${color};border:1px solid ${color}33">${step.day_range || ''}</div>
+            <div class="m3-step-title">${step.title || ''}</div>
+            <svg class="m3-step-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="m3-step-body">
+            <div class="m3-step-inner">
+              ${step.description ? `<div class="m3-step-desc">${step.description}</div>` : ''}
+              ${topicsHtml}
+              ${step.milestone ? `<div class="m3-step-milestone"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>${step.milestone}</div>` : ''}
+              ${step.checkpoint ? `<div class="m3-step-checkpoint">✦ ${step.checkpoint}</div>` : ''}
+            </div>
+          </div>
+        </div>`;
+
+      stepEl.insertBefore(dotEl, stepEl.firstChild);
+      bodyEl.appendChild(stepEl);
+    });
+
+    phEl.appendChild(bodyEl);
+
+    // Connector to next phase
+    if (pi < phases.length - 1) {
+      const nextPhase = phases[pi + 1];
+      const nextColor = PHASE_COLORS[nextPhase?.color] || 'var(--amber)';
+      const connEl = document.createElement('div');
+      connEl.className = 'm3-phase-conn';
+      connEl.innerHTML = `
+        <div class="m3-conn-arrow">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${nextColor}" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+          Next: ${nextPhase?.title || 'Phase ' + (pi+2)}
+        </div>`;
+      phEl.appendChild(connEl);
+    }
+
+    container.appendChild(phEl);
+  });
+
+  // Staggered dot animation
+  setTimeout(() => {
+    const steps = container.querySelectorAll('.m3-step');
+    steps.forEach((el, i) => {
+      setTimeout(() => el.classList.add('reached'), i * 100);
+    });
+  }, 500);
+}
+
+function toggleStep(card) {
+  card.classList.toggle('expanded');
+}
+
+// ── Tips ─────────────────────────────────────────────────
+function renderTips(tips) {
+  const el = document.getElementById('m3Tips');
+  if (!tips.length) { el.style.display='none'; return; }
+  el.innerHTML = tips.map((tip, i) => `
+    <div class="m3-tip-card" style="animation-delay:${i*.08}s">
+      <div class="m3-tip-num">0${i+1}</div>
+      <div class="m3-tip-text">${tip}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// PDF DOWNLOAD
+// ══════════════════════════════════════════
+async function downloadPDF() {
+  if (!currentRoadmap) { alert('Generate a roadmap first.'); return; }
+  const btn = document.getElementById('downloadBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .8s linear infinite"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/></svg> Generating…`;
+
+  try {
+    const res = await fetch('/module3/download-pdf', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ roadmap: currentRoadmap })
+    });
+    if (!res.ok) throw new Error('Failed');
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'careerforge_report.pdf';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  } catch(err) {
+    alert('PDF failed: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF Report`;
+  }
+}
+</script>
+
+{% endblock %}

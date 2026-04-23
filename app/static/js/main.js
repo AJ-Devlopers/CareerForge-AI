@@ -1,70 +1,5 @@
-
-// ============================================================
-// CUSTOM ROLE ANALYSIS
-// ============================================================
-async function analyzeCustomRole() {
-  const input = document.getElementById('customRoleInput');
-  if (!input) return;
-
-  const role = input.value.trim();
-  if (!role) { alert('Please enter a role name.'); return; }
-
-  const resultEl  = document.getElementById('customRoleResult');
-  const loadingEl = document.getElementById('customRoleLoading');
-  const loadText  = document.getElementById('customRoleLoadingText');
-
-  if (resultEl)  resultEl.style.display  = 'none';
-  if (loadingEl) loadingEl.style.display = 'block';
-  if (loadText)  loadText.textContent    = '⏳ Fetching required skills via AI...';
-
-  try {
-    const res  = await fetch('/module1/analyze-custom-role', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ role })
-    });
-    const data = await res.json();
-
-    if (loadingEl) loadingEl.style.display = 'none';
-    if (data.error) { alert(data.error); return; }
-
-    const roleNameEl  = document.getElementById('customRoleName');
-    const matchPctEl  = document.getElementById('customRoleMatchPct');
-    const barEl       = document.getElementById('customRoleBar');
-    const skillsEl    = document.getElementById('customRoleSkills');
-    const interviewEl = document.getElementById('customRoleInterviewBtn');
-
-    if (roleNameEl) roleNameEl.textContent = data.role;
-    if (matchPctEl) {
-      matchPctEl.textContent = data.match + '%';
-      matchPctEl.style.color = data.match >= 60
-        ? 'var(--green)' : data.match >= 35 ? 'var(--amber)' : 'var(--red)';
-    }
-    if (barEl) barEl.style.width = '0%';
-
-    if (skillsEl) {
-      const matchedSet = new Set((data.matched_skills || []).map(s => s.toLowerCase()));
-      skillsEl.innerHTML = (data.role_skills || []).map(function (s) {
-        const matched = matchedSet.has(s.toLowerCase());
-        return `<span class="skill-tag ${matched ? 'skill-match' : ''}">${s}</span>`;
-      }).join('');
-    }
-
-    if (interviewEl) interviewEl.onclick = function () { selectRole(data.role); };
-    if (resultEl)    resultEl.style.display = 'block';
-
-    requestAnimationFrame(function () {
-      setTimeout(function () { if (barEl) barEl.style.width = data.match + '%'; }, 80);
-    });
-
-  } catch (err) {
-    if (loadingEl) loadingEl.style.display = 'none';
-    alert('Error analyzing role. Please try again.');
-  }
-}
 // ============================================================
 // CareerForge AI — main.js
-// Module 2 chat/voice/round logic lives in module2.html <script>
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -92,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const fileName   = document.getElementById('fileName');
 
   if (fileInput && uploadZone) {
-
     fileInput.addEventListener('change', function () {
       const f = fileInput.files[0];
       if (!f) return;
@@ -117,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
           pct = Math.min(pct + 5, 99);
           bar.style.width = pct + '%';
           label.textContent = 'Reading file... ' + pct + '%';
-
           if (pct >= 99) {
             clearInterval(interval);
             setTimeout(function () {
@@ -136,11 +69,9 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       uploadZone.classList.add('drag-over');
     });
-
     uploadZone.addEventListener('dragleave', function () {
       uploadZone.classList.remove('drag-over');
     });
-
     uploadZone.addEventListener('drop', function (e) {
       e.preventDefault();
       uploadZone.classList.remove('drag-over');
@@ -190,27 +121,36 @@ function updateResetBtn() {
     topBtn.title = hasData ? 'Reset everything' : 'No active session';
   }
 }
+
+
 // ============================================================
-// RESET SESSION — clears frontend + backend
+// RESET SESSION — clears EVERYTHING frontend + backend
 // ============================================================
 async function resetSession() {
-  if (!confirm('Reset everything and start fresh?')) return;
+  if (!confirm('Reset everything and start fresh?\n\nThis will clear your resume, all interview attempts, and scores.')) return;
 
-  // ── Clear ALL frontend storage ──
-  sessionStorage.clear();  // wipes everything in one shot
+  // ── 1. Clear ALL frontend storage immediately ──
+  sessionStorage.clear();
+  localStorage.removeItem('cf-theme');  // keep theme? optional - remove if you want full wipe
+  // Actually keep theme pref, only wipe data keys
+  const theme = localStorage.getItem('cf-theme');
+  localStorage.clear();
+  if (theme) localStorage.setItem('cf-theme', theme);
 
-  // ── Clear ALL backend session ──
+  // ── 2. Clear ALL backend session via API ──
   try {
     await fetch('/session/clear-all', { method: 'POST' });
   } catch(e) {
     console.warn('Could not clear server session:', e);
   }
 
+  // ── 3. Update UI ──
   updateResetBtn();
 
-  // ── Redirect to home ──
+  // ── 4. Redirect to homepage (fresh start) ──
   window.location.href = '/';
 }
+
 
 // ============================================================
 // HELPERS
@@ -395,8 +335,7 @@ function renderResults(data) {
                 <div class="role-pct" style="color:${color}">${pct}%</div>
               </div>
               <div class="role-bar">
-                <div class="role-bar-fill" id="${barId}"
-                     style="width:0%;background:${color}"></div>
+                <div class="role-bar-fill" id="${barId}" style="width:0%;background:${color}"></div>
               </div>
               <div class="section-head" style="margin-top:1rem">Required skills</div>
               <div class="skills-grid" style="margin-bottom:1rem">
@@ -555,8 +494,6 @@ function toggleBdCard(card) {
   card.classList.toggle('open');
 }
 
-
-// ── Improvements ──────────────────────────────────────────────
 function renderImprovements(improvements) {
   const block = document.getElementById('improvementsBlock');
   const el    = document.getElementById('improvementsList');

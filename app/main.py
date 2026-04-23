@@ -7,24 +7,12 @@ from dotenv import load_dotenv
 import os
 
 # 🔥 IMPORT ROUTERS
-from app.routers import module1, module2
+from app.routers import module1, module2, module3
 
-
-# =============================
-# LOAD ENV VARIABLES
-# =============================
 load_dotenv()
 
-
-# =============================
-# CREATE FASTAPI APP
-# =============================
 app = FastAPI(title="CareerForge AI")
 
-
-# =============================
-# SESSION MIDDLEWARE (IMPORTANT)
-# =============================
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("SECRET_KEY", "supersecretkey"),
@@ -33,22 +21,10 @@ app.add_middleware(
     https_only=False
 )
 
-
-# =============================
-# STATIC FILES (CSS / JS)
-# =============================
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
-
-# =============================
-# TEMPLATES (JINJA2)
-# =============================
 templates = Jinja2Templates(directory="app/templates")
 
 
-# =============================
-# LANDING PAGE
-# =============================
 @app.get("/", response_class=HTMLResponse)
 def landing_page(request: Request):
     return templates.TemplateResponse(
@@ -58,21 +34,11 @@ def landing_page(request: Request):
     )
 
 
-# =============================
-# MODULE 1 ROUTES
-# =============================
 app.include_router(module1.router, prefix="/module1")
-
-
-# =============================
-# MODULE 2 ROUTES ✅
-# =============================
 app.include_router(module2.router)
+app.include_router(module3.router)
 
 
-# =============================
-# HEALTH CHECK
-# =============================
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
@@ -80,15 +46,13 @@ def health_check():
 
 @app.post("/session/clear-all")
 async def clear_all_sessions(request: Request):
-    """Clears all module sessions — module1 report store, module2 interview results."""
+    """Clears ALL session data — module1 report store, module2, module3."""
     from app.routers.module1 import report_store
 
-    # Clear module1 report store
     session_id = request.session.get("session_id")
     if session_id and session_id in report_store:
         del report_store[session_id]
 
-    # Wipe entire server session (covers module2 interview_results, module2_session, etc.)
     request.session.clear()
 
-    return JSONResponse({"status": "cleared"})
+    return JSONResponse({"status": "cleared", "message": "All session data cleared"})
