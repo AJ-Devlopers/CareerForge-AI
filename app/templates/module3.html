@@ -493,11 +493,16 @@ async function generateRoadmap() {
 // ══════════════════════════════════════════
 function renderReport(data) {
   // Profile summary
+// Profile summary + candidate name heading
+  const banner = document.getElementById('m3ProfileBanner');
+  const nameEl = document.getElementById('m3CandidateNameHeading');
+  const roleEl = document.getElementById('m3RoleSubheading');
+  if (nameEl && SD.name) nameEl.textContent = SD.name;
+  if (roleEl) roleEl.textContent = data.role || SD.role || '';
   if (data.profile_summary) {
-    const banner = document.getElementById('m3ProfileBanner');
     document.getElementById('m3ProfileText').textContent = data.profile_summary;
-    banner.style.display = 'block';
   }
+  banner.style.display = 'block';
 
   renderSummary(data);
   renderInterviews(data);
@@ -877,9 +882,6 @@ function renderTips(tips) {
     </div>`).join('');
 }
 
-// ══════════════════════════════════════════
-// PDF DOWNLOAD
-// ══════════════════════════════════════════
 async function downloadPDF() {
   if (!currentRoadmap) { alert('Generate a roadmap first.'); return; }
   const btn = document.getElementById('downloadBtn');
@@ -887,19 +889,55 @@ async function downloadPDF() {
   btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .8s linear infinite"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/></svg> Generating…`;
 
   try {
+    // Build the roadmap payload with all required keys
+    const roadmapPayload = {
+      role:             currentRoadmap.role             || '',
+      duration:         currentRoadmap.duration         || '',
+      goal:             currentRoadmap.goal             || '',
+      phases:           currentRoadmap.phases           || [],
+      suggestions:      currentRoadmap.suggestions      || [],
+      project_ideas:    currentRoadmap.project_ideas    || [],
+      overall_tips:     currentRoadmap.overall_tips     || [],
+      combined_score:   currentRoadmap.combined_score   || 0,
+      grade:            currentRoadmap.grade            || '',
+      profile_summary:  currentRoadmap.profile_summary  || '',
+      total_weeks:      currentRoadmap.total_weeks      || 0,
+    };
+
     const res = await fetch('/module3/download-pdf', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ roadmap: currentRoadmap })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roadmap: roadmapPayload })
     });
-    if (!res.ok) throw new Error('Failed');
+
+    if (!res.ok) {
+      // Try to read error message
+      let errMsg = 'PDF generation failed (status ' + res.status + ')';
+      try {
+        const errData = await res.json();
+        errMsg = errData.error || errMsg;
+      } catch(e) {}
+      throw new Error(errMsg);
+    }
+
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('pdf')) {
+      const errData = await res.json();
+      throw new Error(errData.error || 'Server returned non-PDF response');
+    }
+
     const blob = await res.blob();
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
-    a.href = url; a.download = 'careerforge_report.pdf';
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a); URL.revokeObjectURL(url);
+    a.href = url;
+    a.download = 'careerforge_' + (SD.name || 'report').replace(/\s+/g,'_').toLowerCase() + '_report.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
   } catch(err) {
-    alert('PDF failed: ' + err.message);
+    alert('PDF Error: ' + err.message + '\n\nMake sure reportlab is installed:\npip install reportlab');
   } finally {
     btn.disabled = false;
     btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF Report`;
